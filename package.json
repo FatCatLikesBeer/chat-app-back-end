@@ -2,7 +2,6 @@
   "name": "chat-app-backend",
   "version": "0.0.1",
   "description": "Chat app backend",
-  "type": "module",
   "private": true,
   "scripts": {
     "start": "node ./app.js",

@@ -1,7 +1,7 @@
-import express from 'express';
-import { createServer } from 'node:http';
+const express = require('express');
+const { createServer } = require('node:http');
 
-import loginRouter from './routes/loginRouter.js';
+const loginRouter = require('./routes/loginRouter.js');
 
 const app = express();
 const server = createServer(app);
