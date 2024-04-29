@@ -1,13 +1,9 @@
-const asyncHandler = require('express-async-handler');
 const express = require('express');
+const asyncHandler = require('express-async-handler');
 const loginRouter = express.Router();
+const loginController = require('../controllers/loginController.js');
 
 /* GET LOGIN API */
-loginRouter.get('/', asyncHandler(async (req, res, next) => {
-  res.json({
-    message: "API GET working",
-    success: true,
-  })
-}));
+loginRouter.get('/', loginController.get);
 
 module.exports = loginRouter;
