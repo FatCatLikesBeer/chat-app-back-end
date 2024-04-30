@@ -4,6 +4,9 @@ const loginRouter = express.Router();
 const loginController = require('../controllers/loginController.js');
 
 /* GET LOGIN API */
-loginRouter.get('/', loginController.get);
+loginRouter.post('/', loginController.login);
+
+/* GET LOGOUT */
+loginRouter.post('/logout', loginController.logout)
 
 module.exports = loginRouter;
