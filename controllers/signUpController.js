@@ -63,7 +63,6 @@ exports.signUp = [
         message: errorMessage,
       });
     } else {
-
       // No errors in request body
       try {
         bcrypt.hash(password, 12, async(err, hashedPassword) => {
@@ -78,7 +77,12 @@ exports.signUp = [
           await newUser.save();
 
           // Make a JWT
-          jwt.sign({ user: newUser }, process.env.JWT_SECRET, { expiresIn: '600s' }, (err, token) => {
+          const payload = {
+            id: newUser._id,
+            userName: userName,
+            email: email,
+          };
+          jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s' }, (err, token) => {
             if (err) {
               res.status(400).json({
                 success: false,
@@ -90,8 +94,11 @@ exports.signUp = [
                 success: true,
                 message: 'Signup Successful 😃',
                 token: token,
+                userData: {
+                  userName: userName,
+                  email: email,
+                },
               });
-
             }
           });
         });

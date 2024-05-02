@@ -53,7 +53,6 @@ passport.deserializeUser(async (id, done) => {
   };
 });
 
-
 app.get('/', asyncHandler(async (req, res, next) => {
   res.json({
     success: true,

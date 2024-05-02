@@ -1,6 +1,6 @@
-const express = require('express');
+const asyncHandler = require('express-async-handler');
+const signUpRouter = require('express').Router();
 const signUpController = require('../controllers/signUpController');
-const signUpRouter = express.Router();
 
 signUpRouter.post('/', signUpController.signUp)
 

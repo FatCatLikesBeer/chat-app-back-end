@@ -18,15 +18,15 @@ beforeAll(async () => {
   // Create a mongodb memory server
   mongoServer = await MongoMemoryServer.create();
 
-  // Create the memory server local URI
-  const mongoUri = mongoServer.getUri();
+  // Get and store the URI of the MongoMemoryServer
+  const mongoUri = await mongoServer.getUri();
 
   // Connect mongose to said server
   mongoose.connect(mongoUri);
 
   // Create and add a new user
   const admin = new UserModel({
-    userName: 'Admin',
+    userName: 'DuplicateUserName',
     email: 'fake@email.com',
     password: 'fakePassword',
   });
@@ -46,12 +46,12 @@ test('Good Signup', async () => {
   const res = await request(app)
     .post('/')
     .send({
-      userName: 'sdlfkjuweoiu383838',
+      userName: 'GoodUserName',
       password: 'plentygoodpassword',
       email: 'good@email.com'
     })
     .expect('Content-Type', /json/)
-    // .expect(200);
+    .expect(200);
 
   const parsedResult = JSON.parse(res.text);
   expect(parsedResult.token).not.toBeUndefined();
@@ -62,7 +62,7 @@ test('Username Already Taken', async () => {
   const res = await request(app)
     .post('/')
     .send({
-      userName: 'Admin',
+      userName: 'DuplicateUserName',
       password: 'plentygoodpassword',
       email: 'good@email.com'
     })
@@ -92,7 +92,7 @@ test('Username Too Short', async () => {
   const res = await request(app)
     .post('/')
     .send({
-      userName: 'sq',
+      userName: '2s',
       password: 'plentygoodpassword',
       email: 'good@email.com'
     })
@@ -107,7 +107,7 @@ test('Username Too Long', async () => {
   const res = await request(app)
     .post('/')
     .send({
-      userName: 'lskdjflskdjfwoeiruwoeiru293847293847',
+      userName: 'This Username Is Supposed To Be Very Very Very Long',
       password: 'plentygoodpassword',
       email: 'good@email.com'
     })
@@ -123,7 +123,7 @@ test('Password too short', async () => {
     .post('/')
     .send({
       userName: 'sldk982lsdiku',
-      password: 'seven',
+      password: '56seven',
       email: 'good@email.com'
     })
     .expect('Content-Type', /json/)
@@ -139,7 +139,7 @@ test('Invalid Email', async () => {
     .send({
       userName: 'slie8656',
       password: 'plentygoodpassword',
-      email: 'slkdjflskdjfwoieruwoeiru293847293847',
+      email: 'This In An Example Of A String That\'s Not An Email',
     })
     .expect('Content-Type', /json/)
     .expect(400);
