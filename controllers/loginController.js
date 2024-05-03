@@ -15,12 +15,12 @@ exports.login = [
   body('userName')
   .trim()
   .isLength({ min: 3 })
-  .withMessage('Username character minimum: 3'),
+  .withMessage('Username or password is incorrect'),
 
   body('userName')
   .trim()
   .isLength({ max: 20 })
-  .withMessage('Username character maximum: 20'),
+  .withMessage('Username or password is incorrect'),
 
   body('userName')
   .trim()
