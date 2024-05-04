@@ -11,6 +11,25 @@ require('dotenv').config();
 const LocalStrategy = require('passport-local').Strategy;
 const UserModel = require('../models/users');
 
+exports.test = [
+  // User Not Found
+  body('userName')
+  .trim()
+  .custom(async value => {
+    const existingUser = await UserModel.findOne({ userName: value }).exec();
+    if (!existingUser) {
+      throw new Error('Username or password is incorrect');
+    }
+  }),
+
+  asyncHandler(async (req, res, next) => {
+    res.json({
+      success: true,
+      message: "Working",
+    });
+  }),
+]
+
 exports.login = [
   body('userName')
   .trim()
