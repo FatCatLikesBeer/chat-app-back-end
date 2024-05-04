@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const passport = require('passport');
 const bcrypt = require("bcryptjs");
+const { MongoMemoryServer } = require('mongodb-memory-server');
 
 require('dotenv').config();
 const LocalStrategy = require("passport-local").Strategy;
@@ -18,6 +19,14 @@ const server = createServer(app);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Is this production or development?
+const serverState = process.env.DEV || "prod";
+//// ------ MongoDB Stuff ------ ////
+if (serverState === "dev") {
+  // This is required only to prevent 10,000 ms response times via cURL testing
+  require("./servers/development");
+}
 
 //// ------ Passport Stuff ------ ////
 // Passport.js local login 'strategy'
@@ -57,6 +66,7 @@ app.get('/', asyncHandler(async (req, res, next) => {
   res.json({
     success: true,
     message: "Welcome to our Chat App API!",
+    state: serverState,
   });
 }));
 
