@@ -12,6 +12,7 @@ const { createServer } = require('node:http');
 
 const loginRouter = require('./routes/loginRouter');
 const signUpRouter = require('./routes/signUpRouter');
+const apiRouter = require('./routes/api');
 
 const app = express();
 const server = createServer(app);
@@ -66,12 +67,12 @@ app.get('/', asyncHandler(async (req, res, next) => {
   res.json({
     success: true,
     message: "Welcome to our Chat App API!",
-    state: serverState,
   });
 }));
 
-app.use('/signup', signUpRouter);
-app.use('/login', loginRouter);
+app.use('/api', apiRouter);
+// app.use('/signup', signUpRouter);
+// app.use('/login', loginRouter);
 
 app.use((err, req, res, next) => {
   res.status(500).json({
