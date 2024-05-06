@@ -1,8 +1,10 @@
-const router = require('express').Router();
+const apiRouter = require('express').Router();
 const loginRouter = require('../routes/loginRouter');
 const signupRouter = require('../routes/signUpRouter');
+const chatRoomRouter = require('../routes/chatRoomRouter');
 
-router.use('/login', loginRouter);
-router.use('/signup', signupRouter);
+apiRouter.use('/login', loginRouter);
+apiRouter.use('/signup', signupRouter);
+apiRouter.use('/chatRoom', chatRoomRouter);
 
-module.exports = router;
+module.exports = apiRouter;
