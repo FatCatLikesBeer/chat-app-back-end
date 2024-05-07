@@ -70,7 +70,7 @@ app.get('/', asyncHandler(async (req, res, next) => {
   });
 }));
 
-app.use('/api', apiRouter);
+app.use('/apiv1', apiRouter);
 // app.use('/signup', signUpRouter);
 // app.use('/login', loginRouter);
 

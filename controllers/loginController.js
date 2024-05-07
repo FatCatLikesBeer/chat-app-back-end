@@ -85,7 +85,7 @@ exports.login = [
           if (match) {
             // If user found & password matches send token
             const payload = {
-              id: queryUser._id,
+              _id: queryUser._id,
               userName: userName,
               email: queryUser.email,
             };

@@ -78,7 +78,7 @@ exports.signUp = [
 
           // Make a JWT
           const payload = {
-            id: newUser._id,
+            _id: newUser._id,
             userName: userName,
             email: email,
           };
