@@ -21,6 +21,53 @@ exports.chatRoomList = asyncHandler(async (req, res, next) => {
         message: "Forbidden",
       })
     } else {
+      // Get chatRoom list
+      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+      console.log(chatRooms);
+      // Create new JWT
+      const payload = {
+        _id: tokenData.id,
+        name: tokenData.name,
+        email: tokenData.email,
+      };
+      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
+        if (err) {
+          console.log("Error generating token");
+          res.json({
+            success: false,
+            message: 'Error generating authentication data',
+          });
+        } else {
+          // Create JSON response
+          res.json({
+            success: true,
+            message: 'ChatRoom Get List not yet implemented',
+            token: token,
+            data: chatRooms,
+          });
+        }
+      });
+    }
+  });
+});
+
+/* Get ChatRoom Detail */
+exports.chatRoomDetail = asyncHandler(async (req, res, next) => {
+  res.json({
+    success: true,
+    message: 'ChatRoom Detail not yet implemented',
+  });
+});
+
+/* Create ChatRoom */
+exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
+  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
+    if (error) {
+      res.status(403).json({
+        success: false,
+        message: "Forbidden",
+      })
+    } else {
       // Create chatRoom
       const user = await UserModel.findById(tokenData._id).exec();
       const newChatRoom = new ChatRoomModel({
@@ -44,28 +91,12 @@ exports.chatRoomList = asyncHandler(async (req, res, next) => {
           // Create JSON response
           res.json({
             success: true,
-            message: 'ChatRoom List not yet implemented',
+            message: 'ChatRoom Create not yet implemented',
             token: token,
           });
         }
       });
     }
-  });
-});
-
-/* Get ChatRoom Detail */
-exports.chatRoomDetail = asyncHandler(async (req, res, next) => {
-  res.json({
-    success: true,
-    message: 'ChatRoom Detail not yet implemented',
-  });
-});
-
-/* Create ChatRoom */
-exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
-  res.json({
-    success: true,
-    message: 'ChatRoom Create not yet implemented',
   });
 });
 

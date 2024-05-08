@@ -66,6 +66,8 @@ test('GET list of chatrooms', async () => {
 
   const parsedResult2 = JSON.parse(res2.text);
   expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.token).not.toBeUndefined();
+  expect(parsedResult2.data).not.toBeUndefined();
 });
 
 /* Unauthorized GET request for list of chatrooms */
@@ -82,7 +84,7 @@ test('NO TOKEN: GET request for list of chatrooms', async () => {
 
   const parsedResult1 = JSON.parse(res1.text);
   expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
+  expect(parsedResult1.token).toBeDefined();
 
   const res2 = await request(app)
     .get('/chatRoom')
