@@ -23,7 +23,6 @@ exports.chatRoomList = asyncHandler(async (req, res, next) => {
     } else {
       // Get chatRoom list
       const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
-      console.log(chatRooms);
       // Create new JWT
       const payload = {
         _id: tokenData.id,
@@ -41,7 +40,7 @@ exports.chatRoomList = asyncHandler(async (req, res, next) => {
           // Create JSON response
           res.json({
             success: true,
-            message: 'ChatRoom Get List not yet implemented',
+            message: `List of chatRooms for ${tokenData.userName}`,
             token: token,
             data: chatRooms,
           });
@@ -74,6 +73,7 @@ exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
         owner: user._id,
       });
       await newChatRoom.save();
+      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
       // Create new JWT
       const payload = {
         _id: tokenData.id,
@@ -91,8 +91,9 @@ exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
           // Create JSON response
           res.json({
             success: true,
-            message: 'ChatRoom Create not yet implemented',
+            message: `${tokenData.userName} created a new chatRoom`,
             token: token,
+            data: chatRooms,
           });
         }
       });
@@ -101,6 +102,8 @@ exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
 });
 
 /* Edit ChatRoom */
+/* I guess this could be used to
+   remove participants from a chatRoom */
 exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
   res.json({
     success: true,

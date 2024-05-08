@@ -42,7 +42,7 @@ afterAll(async () => {
 });
 
 /* GET chatRooms for a user */
-test('GET list of chatrooms', async () => {
+test('GET list of chatRooms', async () => {
   let token;
   const res1 = await request(app)
     .post('/login')
@@ -70,8 +70,8 @@ test('GET list of chatrooms', async () => {
   expect(parsedResult2.data).not.toBeUndefined();
 });
 
-/* Unauthorized GET request for list of chatrooms */
-test('NO TOKEN: GET request for list of chatrooms', async () => {
+/* Unauthorized GET request for list of chatRooms */
+test('NO TOKEN: GET request for list of chatRooms', async () => {
   let token;
   const res1 = await request(app)
     .post('/login')
@@ -97,7 +97,7 @@ test('NO TOKEN: GET request for list of chatrooms', async () => {
 });
 
 /* Unauthorized GET request for list of chatrooms */
-test('BAD TOKEN: GET request for list of chatrooms', async () => {
+test('BAD TOKEN: GET request for list of chatRooms', async () => {
   let token;
   const res1 = await request(app)
     .post('/login')
@@ -125,22 +125,89 @@ test('BAD TOKEN: GET request for list of chatrooms', async () => {
 });
 
 /* POST a new chatRoom from a user */
-// test('POST a new chatRoom', async () => {
-//   let token;
-//   const res1 = await request(app)
-//     .post('/login')
-//     .send({
-//       userName: 'ValidUser',
-//       password: 'fakePassword',
-//     })
-//     .expect("Content-Type", /json/)
-//     .expect(200);
-//
-//   const parsedResult = JSON.parse(res1.text);
-//   expect(parsedResult.success).toBeTruthy();
-//   expect(parsedResult.token).not.toBeUndefined();
-//   token = `Bearer ${parsedResult.token}`;
-// });
+test('POST a new chatRoom', async () => {
+  let token;
+  const res1 = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(res1.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).not.toBeUndefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const res2 = await request(app)
+    .post('/chatRoom')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult2 = JSON.parse(res2.text);
+  expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.token).not.toBeUndefined();
+  expect(parsedResult2.data).not.toBeUndefined();
+  expect(parsedResult2.data.length).toBe(2);
+});
+
+/* Unauthorized POST request to create chatRoom */
+test('NO TOKEN: POST request to create chatRoom ', async () => {
+  let token;
+  const res1 = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(res1.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).toBeDefined();
+
+  const res2 = await request(app)
+    .get('/chatRoom')
+    .expect('Content-Type', /json/)
+    .expect(403);
+
+  const parsedResult2 = JSON.parse(res2.text);
+  expect(parsedResult2.success).toBeFalsy();
+  expect(parsedResult2.message).toBe("Forbidden");
+});
+
+/* Unauthorized POST request to create chatRoom */
+test('BAD TOKEN: POST request to create chatRoom', async () => {
+  let token;
+  const res1 = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(res1.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).not.toBeUndefined();
+  token = `Bearer badTokEn.${parsedResult1.token}`;
+
+  const res2 = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(403);
+
+  const parsedResult2 = JSON.parse(res2.text);
+  expect(parsedResult2.success).toBeFalsy();
+  expect(parsedResult2.message).toBe("Forbidden");
+});
+
 
 /* PUT a change to a chatRoom */
 /* DELETE a chatRoom */
