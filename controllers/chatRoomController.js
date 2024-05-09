@@ -12,6 +12,22 @@ require('dotenv').config();
 const UserModel = require('../models/users');
 const ChatRoomModel = require('../models/chatrooms');
 
+/*
+PUT Body:
+{
+  chatRoom: ChatRoom._id,
+  chown: User._id,
+  add: [
+    User1._id,
+    User2._id
+  ],
+  remove: [
+    User1._id,
+    User2._id
+  ],
+}
+*/
+
 /* Get ChatRooms */
 exports.chatRoomList = asyncHandler(async (req, res, next) => {
   jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
@@ -102,12 +118,54 @@ exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
 });
 
 /* Edit ChatRoom */
-/* I guess this could be used to
-   remove participants from a chatRoom */
 exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
-  res.json({
-    success: true,
-    message: 'ChatRoom Edit not yet implemented',
+  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
+    if (error) {
+      res.status(403).json({
+        success: false,
+        message: "Forbidden",
+      })
+    } else {
+      const chatRoom = await ChatRoomModel.findById(req.body.chatRoom).exec();
+      // Modify Participants
+      if (req.body.add) {
+        chatRoom.participants = [...req.body.add];
+      }
+      if (req.body.remove) {
+        req.body.remove.forEach(elem => {
+          delete chatRoom.participants[chatRoom.participants.indexOf(elem)];
+          chatRoom.participants.sort();
+          chatRoom.participants.pop();
+        });
+      }
+      // Change Owners
+      chatRoom.owner = req.body.chown || chatRoom.owner;
+      // Create new JWT
+      await chatRoom.save();
+      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+      const payload = {
+        _id: tokenData.id,
+        name: tokenData.name,
+        email: tokenData.email,
+      };
+      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
+        if (err) {
+          console.log("Error generating token");
+          res.json({
+            success: false,
+            message: 'Error generating authentication data',
+          });
+        } else {
+          // Create JSON response
+          res.json({
+            success: true,
+            message: `${tokenData.userName} edited a chatRoom`,
+            token: token,
+            data: chatRooms,
+          });
+        }
+      });
+    }
   });
 });
 
