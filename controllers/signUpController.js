@@ -47,6 +47,16 @@ exports.signUp = [
     }
   }),
 
+  // Check if email aready in use
+  body('email')
+  .trim()
+  .custom(async value => {
+    const existingUser = await UserModel.findOne({ email: value }).exec();
+    if (existingUser) {
+      throw new Error('Email already in use');
+    }
+  }),
+
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
     const [userName, email, password] = [

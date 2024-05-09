@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const passport = require('passport');
 const bcrypt = require("bcryptjs");
+const path = require('path');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 require('dotenv').config();
@@ -20,7 +21,7 @@ const server = createServer(app);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.use(express.static(path.join(__dirname, 'build')));
 // Is this production or development?
 const serverState = process.env.DEV || "prod";
 //// ------ MongoDB Stuff ------ ////
@@ -63,16 +64,11 @@ passport.deserializeUser(async (id, done) => {
   };
 });
 
-app.get('/', asyncHandler(async (req, res, next) => {
-  res.json({
-    success: true,
-    message: "Welcome to our Chat App API!",
-  });
-}));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'tips.html'));
+});
 
 app.use('/apiv1', apiRouter);
-// app.use('/signup', signUpRouter);
-// app.use('/login', loginRouter);
 
 app.use((err, req, res, next) => {
   res.status(500).json({

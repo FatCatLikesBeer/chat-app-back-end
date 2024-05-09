@@ -71,6 +71,7 @@ test('Username Already Taken', async () => {
 
   const parsedResult = JSON.parse(res.text);
   expect(parsedResult.success).toBeFalsy();
+  expect(parsedResult.message).toBe('Username already exists');
 });
 
 test('Username Empty', async () => {
@@ -147,3 +148,21 @@ test('Invalid Email', async () => {
   const parsedResult = JSON.parse(res.text);
   expect(parsedResult.success).toBeFalsy();
 });
+
+test('Email Already Used', async () => {
+  const res = await request(app)
+    .post('/')
+    .send({
+      userName: 'UniqueUsername',
+      password: 'plentygoodpassword',
+      email: 'fake@email.com'
+    })
+    .expect('Content-Type', /json/)
+    .expect(400);
+
+  const parsedResult = JSON.parse(res.text);
+  expect(parsedResult.success).toBeFalsy();
+  expect(parsedResult.message).toBe('Email already in use');
+});
+
+
