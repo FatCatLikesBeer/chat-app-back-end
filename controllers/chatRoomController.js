@@ -129,7 +129,13 @@ exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
       const chatRoom = await ChatRoomModel.findById(req.body.chatRoom).exec();
       // Modify Participants
       if (req.body.add) {
-        chatRoom.participants = [...req.body.add];
+        // For each element in the add array, only add
+        // element if not already in participants array
+        req.body.add.forEach(elem => {
+          if (!chatRoom.participants.includes(elem)) {
+            chatRoom.participants.push(elem);
+          }
+        });
       }
       if (req.body.remove) {
         req.body.remove.forEach(elem => {
