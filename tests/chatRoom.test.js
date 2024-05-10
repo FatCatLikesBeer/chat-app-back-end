@@ -428,6 +428,8 @@ test('PUT: BAD TOKEN new chatRoom owner', async () => {
   expect(parsedResult2.message).toBe("Forbidden");
 });
 
+//// ---- DELETE REQUESTS ---- ////
+
 /* DELETE a chatRoom */
 test('DELETE a chatRoom', async () => {
   let token;

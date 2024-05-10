@@ -1,9 +1,5 @@
 const chatRoomRouter = require('express').Router();
 const chatRoomController = require("../controllers/chatRoomController");
-const asyncHandler = require('express-async-handler');
-
-const UserModel = require('../models/users');
-const ChatRoomModel = require('../models/chatrooms');
 
 /* Get ChatRooms */
 chatRoomRouter.get('/', chatRoomController.chatRoomList);
