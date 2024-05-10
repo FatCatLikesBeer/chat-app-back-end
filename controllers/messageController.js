@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const passportLocal = require('passport-local');
-const verifyToken = require('../middleware/jwtVerification');
 
 require('dotenv').config();
 
@@ -46,6 +45,7 @@ exports.messageDetail = asyncHandler(async (req, res, next) => {
         }
       });
     }
+  });
 });
 
 /* GET message */
@@ -81,6 +81,7 @@ exports.messageList = asyncHandler(async (req, res, next) => {
         }
       });
     }
+  });
 });
 
 /* POST message */
@@ -117,6 +118,7 @@ exports.messageCreate = asyncHandler(async (req, res, next) => {
         }
       });
     }
+  });
 });
 
 /* PUT message edit */
@@ -158,6 +160,7 @@ exports.messageEdit = asyncHandler(async (req, res, next) => {
         }
       });
     }
+  });
 });
 
 /* DELETE message */
@@ -192,5 +195,6 @@ exports.messageDelete = asyncHandler(async (req, res, next) => {
         }
       });
     }
+  });
 });
 

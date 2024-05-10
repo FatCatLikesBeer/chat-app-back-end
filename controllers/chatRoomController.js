@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const passportLocal = require('passport-local');
-const verifyToken = require('../middleware/jwtVerification');
 
 require('dotenv').config();
 
