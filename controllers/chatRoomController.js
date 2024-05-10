@@ -179,9 +179,39 @@ exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
 /* I'm not exactly sure what this is going
    to return but it's here just incase */
 exports.chatRoomDelete = asyncHandler(async (req, res, next) => {
-  res.json({
-    success: true,
-    message: 'ChatRoom Delete not yet implemented',
+  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
+    if (error) {
+      res.status(403).json({
+        success: false,
+        message: "Forbidden",
+      })
+    } else {
+      const deleteThisRoom = req.body.chatRoom;
+      await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
+      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+      const payload = {
+        _id: tokenData.id,
+        name: tokenData.name,
+        email: tokenData.email,
+      };
+      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
+        if (err) {
+          console.log("Error generating token");
+          res.json({
+            success: false,
+            message: 'Error generating authentication data',
+          });
+        } else {
+          // Create JSON response
+          res.json({
+            success: true,
+            message: 'chatRoom successfully deleted',
+            token: token,
+            data: chatRooms,
+          });
+        }
+      });
+    }
   });
 });
 

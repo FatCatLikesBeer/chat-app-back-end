@@ -429,4 +429,84 @@ test('PUT: BAD TOKEN new chatRoom owner', async () => {
 });
 
 /* DELETE a chatRoom */
+test('DELETE a chatRoom', async () => {
+  let token;
+  const res1 = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(res1.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).toBeDefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const getChats = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect(200)
+
+  const getChatsParsed = JSON.parse(getChats.text);
+  const chatRooms = getChatsParsed.data;
+  token = `Bearer ${getChatsParsed.token}`;
+
+  const res2 = await request(app)
+    .delete('/chatRoom')
+    .set('Authorization', token)
+    .send({
+      chatRoom: chatRooms[0],
+    })
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult2 = JSON.parse(res2.text);
+  expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.message).toBe("chatRoom successfully deleted");
+});
+
+/* DELETE BAD TOKEN */
+test('DELETE: BAD TOKEN', async () => {
+  let token;
+  const res1 = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(res1.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).toBeDefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const getChats = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect(200)
+
+  const getChatsParsed = JSON.parse(getChats.text);
+  const chatRooms = getChatsParsed.data;
+
+  token = `Bearer badTokEn.${getChatsParsed.token}`;
+
+  const res2 = await request(app)
+    .delete('/chatRoom')
+    .set('Authorization', token)
+    .send({
+      chatRoom: chatRooms[0],
+    })
+    .expect('Content-Type', /json/)
+    .expect(403);
+
+  const parsedResult2 = JSON.parse(res2.text);
+  expect(parsedResult2.success).toBeFalsy();
+  expect(parsedResult2.message).toBe("Forbidden");
+});
+
 /* GET the details for a chatRoom */
