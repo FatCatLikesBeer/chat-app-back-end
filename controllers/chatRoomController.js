@@ -12,7 +12,8 @@ const UserModel = require('../models/users');
 const ChatRoomModel = require('../models/chatrooms');
 
 /*
-PUT Body:
+Expected structure of
+a PUT body request
 {
   chatRoom: ChatRoom._id,
   chown: User._id,
@@ -29,40 +30,14 @@ PUT Body:
 
 /* Get ChatRooms */
 exports.chatRoomList = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      // Get chatRoom list
-      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
-      // Create new JWT
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: `List of chatRooms for ${tokenData.userName}`,
-            token: token,
-            data: chatRooms,
-          });
-        }
-      });
-    }
-  });
+  const tokenData = req.tokenData;
+  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+  req.response = {
+    success: true,
+    message: `List of chatRooms for ${tokenData.userName}`,
+    data: chatRooms,
+  }
+  next();
 });
 
 /* Get ChatRoom Detail */
@@ -75,143 +50,85 @@ exports.chatRoomDetail = asyncHandler(async (req, res, next) => {
 
 /* Create ChatRoom */
 exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      // Create chatRoom
-      const user = await UserModel.findById(tokenData._id).exec();
-      const newChatRoom = new ChatRoomModel({
-        owner: user._id,
-      });
-      await newChatRoom.save();
-      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
-      // Create new JWT
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: `${tokenData.userName} created a new chatRoom`,
-            token: token,
-            data: chatRooms,
-          });
-        }
-      });
-    }
+  const tokenData = req.tokenData;
+
+  // Create chatRoom
+  const user = await UserModel.findById(tokenData._id).exec();
+  const newChatRoom = new ChatRoomModel({
+    owner: user._id,
   });
+  await newChatRoom.save();
+  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+  req.response = {
+    success: true,
+    message: `${tokenData.userName} created a new chatRoom`,
+    data: chatRooms,
+  }
+  next();
 });
 
-/* Edit ChatRoom */
+/* PUT chatRoom edits */
 exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      const chatRoom = await ChatRoomModel.findById(req.body.chatRoom).exec();
-      // Modify Participants
-      if (req.body.add) {
-        // For each element in the add array, only add
-        // element if not already in participants array
-        req.body.add.forEach(elem => {
-          if (!chatRoom.participants.includes(elem)) {
-            chatRoom.participants.push(elem);
-          }
-        });
+  const tokenData = req.tokenData;
+  const chatRoom = await ChatRoomModel.findById(req.body.chatRoom).exec();
+
+  // Modify Participants
+  if (req.body.add) {
+    // For each element in the add array, only add
+    // element if not already in participants array
+    req.body.add.forEach(elem => {
+      if (!chatRoom.participants.includes(elem)) {
+        chatRoom.participants.push(elem);
       }
-      if (req.body.remove) {
-        req.body.remove.forEach(elem => {
-          delete chatRoom.participants[chatRoom.participants.indexOf(elem)];
-          chatRoom.participants.sort();
-          chatRoom.participants.pop();
-        });
-      }
-      // Change Owners
-      chatRoom.owner = req.body.chown || chatRoom.owner;
-      // Create new JWT
-      await chatRoom.save();
-      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: `${tokenData.userName} edited a chatRoom`,
-            token: token,
-            data: chatRooms,
-          });
-        }
-      });
-    }
-  });
+    });
+  }
+  // Remove participants
+  // This block of garbage exists because javascript...
+  // Find index of element, delete value at element, move
+  // empty element to the end, pop the end of array...
+  if (req.body.remove) {
+    req.body.remove.forEach(elem => {
+      delete chatRoom.participants[chatRoom.participants.indexOf(elem)];
+      chatRoom.participants.sort();
+      chatRoom.participants.pop();
+    });
+  }
+
+  // Change Owners
+  chatRoom.owner = req.body.chown || chatRoom.owner;
+
+  // Save modified chatRoom
+  await chatRoom.save();
+
+  // Get updated list of chatRooms for user
+  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+
+  // Save the JSON API response
+  req.response = {
+    success: true,
+    message: `${tokenData.userName} edited a chatRoom`,
+    data: chatRooms,
+  }
+  next();
 });
 
 /* Delete ChatRoom */
 /* I'm not exactly sure what this is going
    to return but it's here just incase */
 exports.chatRoomDelete = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      const deleteThisRoom = req.body.chatRoom;
-      await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
-      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: 'chatRoom successfully deleted',
-            token: token,
-            data: chatRooms,
-          });
-        }
-      });
-    }
-  });
+  const tokenData = req.tokenData;
+
+  const deleteThisRoom = req.body.chatRoom;
+  await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
+  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+
+  // Save the JSON API response
+  req.response = {
+    success: true,
+    message: 'chatRoom successfully deleted',
+    data: chatRooms,
+  }
+  next();
 });
 
 

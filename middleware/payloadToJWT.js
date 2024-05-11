@@ -3,11 +3,14 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const sendPayload = asyncHandler(async (req, res, next) => {
+  // Parse out payload
+  const payload = req.tokenData;
+
   // Parse out response
   const response = req.response;
 
   // Generate token and send this stuff off!
-  jwt.sign(req.tokenData, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
     if (err) {
       console.log("Error generating token");
       res.json({
