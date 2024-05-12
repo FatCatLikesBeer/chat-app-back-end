@@ -1,19 +1,19 @@
 const messageRouter = require('express').Router();
 const messageController = require("../controllers/messageController");
 
-/* Get ChatRooms */
+/* Get Messages */
 messageRouter.get('/', messageController.messageList);
 
-/* Create ChatRoom */
+/* Create Message */
 messageRouter.post('/', messageController.messageCreate);
 
-/* Edit ChatRoom */
+/* Edit Message */
 messageRouter.put('/', messageController.messageEdit);
 
-/* Delete ChatRoom */
+/* Delete Message */
 messageRouter.delete('/', messageController.messageDelete);
 
-/* Get ChatRoom Detail */
+/* Get Message Detail */
 messageRouter.get('/:id', messageController.messageDetail);
 
 module.exports = messageRouter;

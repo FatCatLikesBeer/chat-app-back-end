@@ -14,187 +14,89 @@ const MessageModel = require('../models/messages');
 
 /* GET message detail */
 exports.messageDetail = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      // Query DB for message detail
-      // Return message details in response
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: 'GET message Detail not yet implemented',
-            token: token,
-          });
-        }
-      });
-    }
-  });
+  next();
 });
 
-/* GET message */
+/* GET messages */
 exports.messageList = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      // Query DB for list of 50 most recent messages per chatoom
-      // Return query in response
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: 'GET message list not yet implemented',
-            token: token,
-          });
-        }
-      });
+  try {
+    const chatRoom = req.body.chatRoom;
+    const listOfMessages = await MessageModel.find({ chatRoom: chatRoom }).sort({ dateCreated: -1 }).exec();
+    req.response = {
+      success: true,
+      message: 'List of messages successfully retrieved',
+      data: listOfMessages,
     }
-  });
+    next();
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Sorry but something broke, \nerrorStatement: messageControllerGET\n${error}`,
+    });
+  }
 });
 
 /* POST message */
 exports.messageCreate = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      // Parse body of message value
-      // Add it to database
-      // Return the value in response
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: 'POST message Detail not yet implemented',
-            token: token,
-          });
-        }
-      });
+  try {
+    const chatRoom = req.body.chatRoom;
+    const message = req.body.message;
+    const newMessage = new MessageModel({
+      author: {
+        _id: req.tokenData._id,
+        userName: req.tokenData.userName,
+      },
+      chatRoom: chatRoom,
+      message: message,
+    })
+    await newMessage.save();
+    const listOfMessages = await MessageModel.find({ chatRoom: chatRoom }).sort({ dateCreated: -1 }).exec();
+    req.response = {
+      success: true,
+      message: 'Message successfully posted',
+      data: listOfMessages,
     }
-  });
+    next();
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Sorry but something broke, \nerrorStatement: messageControllerPOST\n${error}`,
+    });
+  }
 });
 
 /* PUT message edit */
 exports.messageEdit = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      // I don't think I'll use this...
-      // I added a prevMessages array to the model just incase
-      // message.prevMessages.push({
-      //  message: message.message,
-      //  dateCreated: message.dateCreated,
-      // });
-      // message.message = "";
-      // message.dateCreated = new Date.now();
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: 'PUT message not yet implemented',
-            token: token,
-          });
-        }
-      });
+  try {
+    const message = req.body.message;
+    const prevMessage = {
+      message: message.message,
+      dateCreated: message.dateCreated,
     }
-  });
+    const newMessage = new MessageModel({
+      message: req.body.edit,
+      author: message.author,
+      chatRoom: message.chatRoom,
+      prevMessages: prevMessage,
+      _id: message._id,
+    })
+    const updatedMessage = await MessageModel.findByIdAndUpdate(message._id, newMessage, {});
+    const listOfMessages = await MessageModel.find({ chatRoom: message.chatRoom }).sort({ dateCreated: -1 }).exec();
+    req.response = {
+      success: true,
+      message: "Message was successfully edited",
+      data: listOfMessages,
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Sorry but something broke, \nerrorStatement: messageControllerPUT\n${error}`,
+    });
+  }
 });
 
 /* DELETE message */
 exports.messageDelete = asyncHandler(async (req, res, next) => {
-  jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
-    if (error) {
-      res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    } else {
-      // just change message.visible to false
-      const payload = {
-        _id: tokenData.id,
-        name: tokenData.name,
-        email: tokenData.email,
-      };
-      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
-        if (err) {
-          console.log("Error generating token");
-          res.json({
-            success: false,
-            message: 'Error generating authentication data',
-          });
-        } else {
-          // Create JSON response
-          res.json({
-            success: true,
-            message: 'DELETE message not yet implmented',
-            token: token,
-          });
-        }
-      });
-    }
-  });
+  next();
 });
-

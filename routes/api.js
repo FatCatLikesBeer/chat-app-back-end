@@ -12,7 +12,8 @@ const messageRouter = require('../routes/messageRouter');
 apiRouter.use('/signup', signupRouter);
 apiRouter.use('/login', loginRouter);
 apiRouter.use('/chatRoom', tokenMover, verifyToken, chatRoomRouter, payloadToJWT);
-apiRouter.use('/message', tokenMover, messageRouter);
+apiRouter.use('/message', tokenMover, verifyToken, messageRouter, payloadToJWT);
+// apiRouter.use('/message', tokenMover, messageRouter);
 
 // This stuff is here for testing new things
 const testingRoute = require('../routes/testLogic');
