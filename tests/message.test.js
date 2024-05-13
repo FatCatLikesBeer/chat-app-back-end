@@ -248,3 +248,86 @@ test('PUT an edit to a message', async () => {
 });
 
 //// ---- DELETE REQUESTS ---- ////
+test('DELETE a message', async () => {
+  let token;
+  const firstLogin = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(firstLogin.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).not.toBeUndefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const getListOfChatRooms = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+  expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.token).not.toBeUndefined();
+  expect(parsedResult2.data).not.toBeUndefined();
+  token = `Bearer ${parsedResult2.token}`;
+
+  const getLastFiftyMessages = await request(app)
+    .get('/message')
+    .send({
+      chatRoom: chats[0]._id,
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+  token = `Bearer ${parsedResult3.token}`;
+  message = parsedResult3.data[0];
+
+  const deleteMessage = await request(app)
+    .delete('/message')
+    .send({
+      message: message,
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult4 = JSON.parse(deleteMessage.text);
+  expect(parsedResult4.success).toBeTruthy();
+  expect(parsedResult4.message).toBe("Message successfully deleted");
+});
+
+//// ---- Testing Middleware Failues ---- ////
+test('NO Token', async () => {
+  const getListOfChatRooms = await request(app)
+    .get('/message')
+    .expect('Content-Type', /json/)
+    .expect(403);
+
+  const parsedResult = JSON.parse(getListOfChatRooms.text);
+  expect(parsedResult.success).toBeFalsy();
+  expect(parsedResult.token).toBeUndefined();
+  expect(parsedResult.data).toBeUndefined();
+  expect(parsedResult.message).toBe("Forbidden");
+});
+
+test('BAD Token', async () => {
+  const token = "Bearer sldkfj2o8374lskdjf..skdfjlkxjcvolil98234.sldkfjowieur982734";
+  const getListOfChatRooms = await request(app)
+    .get('/message')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(403);
+
+  const parsedResult = JSON.parse(getListOfChatRooms.text);
+  expect(parsedResult.success).toBeFalsy();
+  expect(parsedResult.token).toBeUndefined();
+  expect(parsedResult.data).toBeUndefined();
+  expect(parsedResult.message).toBe("Forbidden");
+  console.log(parsedResult);
+});

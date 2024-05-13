@@ -98,5 +98,14 @@ exports.messageEdit = asyncHandler(async (req, res, next) => {
 
 /* DELETE message */
 exports.messageDelete = asyncHandler(async (req, res, next) => {
-  next();
+  try {
+    await MessageModel.updateOne({ _id: req.body.message._id }, { $set: { visible: false } });
+    req.response = { success: true, message: "Message successfully deleted" }
+    next();
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Sorry but something broke, \nerrorStatement: messageControllerDELETE\n${error}`,
+    });
+  }
 });
