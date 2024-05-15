@@ -6,6 +6,7 @@ const loginRouter = require('../routes/loginRouter.js');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const UserModel = require('../models/users');
+const ChatRoomModel = require('../models/chatrooms');
 
 const app = express();
 app.use(express.json());
@@ -25,13 +26,29 @@ beforeAll(async () => {
   // Connect mongose to said server
   mongoose.connect(mongoUri);
 
-  // Create and add a new user
+  // Create & add users and chatRooms
   const newUser = new UserModel({
     userName: 'ValidUser',
     email: 'fake@email.com',
     password: '$2a$12$EKvweHK.oS52QkPMnMUTfuY/qzHVoEcYl/DqCmovehwTNuvUtR6DG',
   });
   await newUser.save();
+  const differentOnwer = new UserModel({
+    userName: 'DifferentPerson',
+    email: 'fakej@email.com',
+    password: '$2a$12$EKvweHK.oS52QkPMnMUTfuY/qzHVoEcYl/DqCmovehwTNuvUtR6DG',
+  });
+  await differentOnwer.save();
+  const chatRoom1 = new ChatRoomModel({
+    owner: newUser._id,
+    participants: [newUser._id],
+  })
+  await chatRoom1.save();
+  const chatRoom2 = new ChatRoomModel({
+    owner: differentOnwer._id,
+    participants: [newUser._id],
+  })
+  await chatRoom2.save();
 });
 
 /* DO ALL THIS AFTER RUNNING TESTS */
@@ -56,6 +73,7 @@ test('Regular Login', async () => {
   const parsedResult = JSON.parse(res.text);
   expect(parsedResult.success).toBeTruthy();
   expect(parsedResult.token).not.toBeUndefined();
+  console.log(parsedResult.data.chatRooms);
 });
 
 test('Username Too Short', async () => {
