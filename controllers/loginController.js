@@ -11,6 +11,7 @@ require('dotenv').config();
 const LocalStrategy = require('passport-local').Strategy;
 const UserModel = require('../models/users');
 const ChatRoomModel = require('../models/chatrooms');
+const getChats = require('../controllers/chatRoomController');
 
 exports.test = [
   // User Not Found
@@ -85,7 +86,11 @@ exports.login = [
           const match = await bcrypt.compare(password, queryUser.password);
           if (match) {
             // Get chatRooms for user
-            const chatRooms = await ChatRoomModel.find({ participants: queryUser._id }).exec();
+            req.skipNext = true;
+            req.tokenData = {
+              _id: queryUser._id
+            }
+            const chatRooms = await getChats.chatRoomList(req, res, next);
             // If user found & password matches send token
             const payload = {
               _id: queryUser._id,

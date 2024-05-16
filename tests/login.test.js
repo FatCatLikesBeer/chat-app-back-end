@@ -73,7 +73,7 @@ test('Regular Login', async () => {
   const parsedResult = JSON.parse(res.text);
   expect(parsedResult.success).toBeTruthy();
   expect(parsedResult.token).not.toBeUndefined();
-  console.log(parsedResult.data.chatRooms);
+  expect(parsedResult.data.chatRooms).not.toBeUndefined();
 });
 
 test('Username Too Short', async () => {

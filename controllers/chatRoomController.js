@@ -37,7 +37,11 @@ exports.chatRoomList = asyncHandler(async (req, res, next) => {
     message: `List of chatRooms for ${tokenData.userName}`,
     data: chatRooms,
   }
-  next();
+  if (req.skipNext === true) {
+    return chatRooms;
+  } else {
+    next();
+  }
 });
 
 /* Get ChatRoom Detail */
