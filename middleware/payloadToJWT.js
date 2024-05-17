@@ -9,6 +9,9 @@ const sendPayload = asyncHandler(async (req, res, next) => {
   // Parse out response
   const response = req.response;
 
+  // Error flag
+  const errorFlag = req.error || 'undefined';
+
   // Generate token and send this stuff off!
   jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
     if (err) {
@@ -19,7 +22,13 @@ const sendPayload = asyncHandler(async (req, res, next) => {
       });
     } else {
       response.token = token;
-      res.json(response);
+      if (errorFlag != 'undefined') {
+        response.success = false;
+        res.status(errorFlag).json(response);
+      } else {
+        response.success = true;
+        res.json(response);
+      }
     }
   });
 });

@@ -14,6 +14,10 @@ const MessageModel = require('../models/messages');
 
 /* GET message detail */
 exports.messageDetail = asyncHandler(async (req, res, next) => {
+  req.response = {
+    success: true,
+    message: "Message Detail not yet implmented",
+  }
   next();
 });
 
@@ -23,17 +27,16 @@ exports.messageList = asyncHandler(async (req, res, next) => {
     const chatRoom = req.body.chatRoom;
     const listOfMessages = await MessageModel.find({ chatRoom: chatRoom }).sort({ dateCreated: -1 }).exec();
     req.response = {
-      success: true,
       message: 'List of messages successfully retrieved',
       data: listOfMessages,
     }
-    next();
   } catch (error) {
-    res.status(500).json({
-      success: false,
+    req.error = 500;
+    req.response = {
       message: `Sorry but something broke, \nerrorStatement: messageControllerGET\n${error}`,
-    });
+    };
   }
+  next();
 });
 
 /* POST message */

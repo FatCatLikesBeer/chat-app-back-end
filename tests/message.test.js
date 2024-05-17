@@ -302,6 +302,50 @@ test('DELETE a message', async () => {
   expect(parsedResult4.message).toBe("Message successfully deleted");
 });
 
+//// ---- GET REQUEST: Bad chatRoom var ---- ////
+test('GET: Bad chatRoom var', async () => {
+  let token;
+  const firstLogin = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(firstLogin.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).not.toBeUndefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const getListOfChatRooms = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+  expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.token).not.toBeUndefined();
+  expect(parsedResult2.data).not.toBeUndefined();
+  token = `Bearer ${parsedResult2.token}`;
+
+  const badChatRoomVar = await request(app)
+    .get('/message')
+    .send({
+      chatRoom: 'undefined',
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(500);
+
+  const parsedResult3 = JSON.parse(badChatRoomVar.text);
+  expect(parsedResult3.success).toBeFalsy();
+  expect(parsedResult3.token).not.toBeUndefined();
+  expect(parsedResult3.message).not.toBeUndefined();
+});
+
 //// ---- Testing Middleware Failues ---- ////
 test('NO Token', async () => {
   const getListOfChatRooms = await request(app)
@@ -329,5 +373,4 @@ test('BAD Token', async () => {
   expect(parsedResult.token).toBeUndefined();
   expect(parsedResult.data).toBeUndefined();
   expect(parsedResult.message).toBe("Forbidden");
-  console.log(parsedResult);
 });
