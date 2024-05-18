@@ -303,7 +303,7 @@ test('DELETE a message', async () => {
 });
 
 //// ---- GET REQUEST: Bad chatRoom var ---- ////
-test('GET: Bad chatRoom var', async () => {
+test('GET: chatRoom _id: undefined', async () => {
   let token;
   const firstLogin = await request(app)
     .post('/login')
@@ -344,6 +344,164 @@ test('GET: Bad chatRoom var', async () => {
   expect(parsedResult3.success).toBeFalsy();
   expect(parsedResult3.token).not.toBeUndefined();
   expect(parsedResult3.message).not.toBeUndefined();
+});
+
+//// ---- POST REQUESTS: Bad chatRoom var ---- ////
+test('POST: Bad chatRoom _id', async () => {
+  let token;
+  const firstLogin = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(firstLogin.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).not.toBeUndefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const getListOfChatRooms = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+  expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.token).not.toBeUndefined();
+  expect(parsedResult2.data).not.toBeUndefined();
+  token = `Bearer ${parsedResult2.token}`;
+
+  const createMessage = await request(app)
+    .post('/message')
+    .send({
+      chatRoom: `${chats[0]._id}lskjdfoieur`,
+      message: "This post was made OUTSIDE the test and inside the controller 😃"
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(500);
+
+  const parsedResult3 = JSON.parse(createMessage.text);
+  expect(parsedResult3.success).toBeFalsy();
+  expect(parsedResult3.token).not.toBeUndefined();
+  expect(parsedResult3.message).not.toBeUndefined();
+});
+
+//// ---- PUT REQUESTS: no message _id ---- ////
+test('PUT: missing message value', async () => {
+  let token;
+  const firstLogin = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(firstLogin.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).not.toBeUndefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const getListOfChatRooms = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+  expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.token).not.toBeUndefined();
+  expect(parsedResult2.data).not.toBeUndefined();
+  token = `Bearer ${parsedResult2.token}`;
+
+  const getLastFiftyMessages = await request(app)
+    .get('/message')
+    .send({
+      chatRoom: chats[0]._id,
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+  token = `Bearer ${parsedResult3.token}`;
+  message = parsedResult3.data[0];
+
+  const editMessage = await request(app)
+    .put('/message')
+    .send({
+      edit: "This post was made technically SAVED outside the test and inside the controller 😉",
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(500);
+
+  const parsedResult4 = JSON.parse(editMessage.text);
+  expect(parsedResult4.success).toBeFalsy();
+  expect(parsedResult4.token).not.toBeUndefined();
+  expect(parsedResult4.message).not.toBeUndefined();
+});
+
+//// ---- DELETE REQUESTS: Malformed message _id ---- ////
+test('DELETE: malformed message _id', async () => {
+  let token;
+  const firstLogin = await request(app)
+    .post('/login')
+    .send({
+      userName: 'ValidUser',
+      password: 'fakePassword',
+    })
+    .expect("Content-Type", /json/)
+    .expect(200);
+
+  const parsedResult1 = JSON.parse(firstLogin.text);
+  expect(parsedResult1.success).toBeTruthy();
+  expect(parsedResult1.token).not.toBeUndefined();
+  token = `Bearer ${parsedResult1.token}`;
+
+  const getListOfChatRooms = await request(app)
+    .get('/chatRoom')
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+
+  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+  expect(parsedResult2.success).toBeTruthy();
+  expect(parsedResult2.token).not.toBeUndefined();
+  expect(parsedResult2.data).not.toBeUndefined();
+  token = `Bearer ${parsedResult2.token}`;
+
+  const getLastFiftyMessages = await request(app)
+    .get('/message')
+    .send({
+      chatRoom: chats[0]._id,
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(200);
+  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+  token = `Bearer ${parsedResult3.token}`;
+  message = parsedResult3.data[0];
+  message._id = 'woeirulskdjflskd';
+
+  const deleteMessage = await request(app)
+    .delete('/message')
+    .send({
+      message: message,
+    })
+    .set('Authorization', token)
+    .expect('Content-Type', /json/)
+    .expect(500);
+
+  const parsedResult4 = JSON.parse(deleteMessage.text);
+  expect(parsedResult4.success).toBeFalsy();
+  expect(parsedResult4.token).not.toBeUndefined();
+  expect(parsedResult4.message).not.toBeUndefined();
 });
 
 //// ---- Testing Middleware Failues ---- ////

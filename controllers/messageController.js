@@ -30,13 +30,14 @@ exports.messageList = asyncHandler(async (req, res, next) => {
       message: 'List of messages successfully retrieved',
       data: listOfMessages,
     }
+    next();
   } catch (error) {
     req.error = 500;
     req.response = {
       message: `Sorry but something broke, \nerrorStatement: messageControllerGET\n${error}`,
     }
+    next();
   }
-  next();
 });
 
 /* POST message */
@@ -66,6 +67,7 @@ exports.messageCreate = asyncHandler(async (req, res, next) => {
       success: false,
       message: `Sorry but something broke, \nerrorStatement: messageControllerPOST\n${error}`,
     }
+    next();
   }
 });
 
@@ -98,6 +100,7 @@ exports.messageEdit = asyncHandler(async (req, res, next) => {
       success: false,
       message: `Sorry but something broke, \nerrorStatement: messageControllerPOST\n${error}`,
     }
+    next();
   }
 });
 
@@ -113,5 +116,6 @@ exports.messageDelete = asyncHandler(async (req, res, next) => {
       success: false,
       message: `Sorry but something broke, \nerrorStatement: messageControllerPOST\n${error}`,
     }
+    next();
   }
 });
