@@ -34,7 +34,7 @@ exports.messageList = asyncHandler(async (req, res, next) => {
     req.error = 500;
     req.response = {
       message: `Sorry but something broke, \nerrorStatement: messageControllerGET\n${error}`,
-    };
+    }
   }
   next();
 });
@@ -61,10 +61,11 @@ exports.messageCreate = asyncHandler(async (req, res, next) => {
     }
     next();
   } catch (error) {
-    res.status(500).json({
+    req.error = 500;
+    req.response = {
       success: false,
       message: `Sorry but something broke, \nerrorStatement: messageControllerPOST\n${error}`,
-    });
+    }
   }
 });
 
@@ -92,10 +93,11 @@ exports.messageEdit = asyncHandler(async (req, res, next) => {
     }
     next();
   } catch (error) {
-    res.status(500).json({
+    req.error = 500;
+    req.response = {
       success: false,
-      message: `Sorry but something broke, \nerrorStatement: messageControllerPUT\n${error}`,
-    });
+      message: `Sorry but something broke, \nerrorStatement: messageControllerPOST\n${error}`,
+    }
   }
 });
 
@@ -106,9 +108,10 @@ exports.messageDelete = asyncHandler(async (req, res, next) => {
     req.response = { success: true, message: "Message successfully deleted" }
     next();
   } catch (error) {
-    res.status(500).json({
+    req.error = 500;
+    req.response = {
       success: false,
-      message: `Sorry but something broke, \nerrorStatement: messageControllerDELETE\n${error}`,
-    });
+      message: `Sorry but something broke, \nerrorStatement: messageControllerPOST\n${error}`,
+    }
   }
 });

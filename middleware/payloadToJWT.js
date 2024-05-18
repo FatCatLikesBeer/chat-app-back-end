@@ -15,7 +15,7 @@ const sendPayload = asyncHandler(async (req, res, next) => {
   // Generate token and send this stuff off!
   jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s'}, (err, token) => {
     if (err) {
-      console.log("Error generating token");
+      console.error("Error generating token", err);
       res.json({
         success: false,
         message: 'Error generating authentication data',

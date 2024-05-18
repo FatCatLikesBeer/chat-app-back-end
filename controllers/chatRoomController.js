@@ -30,16 +30,25 @@ a PUT body request
 
 /* Get ChatRooms */
 exports.chatRoomList = asyncHandler(async (req, res, next) => {
-  const tokenData = req.tokenData;
-  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
-  req.response = {
-    success: true,
-    message: `List of chatRooms for ${tokenData.userName}`,
-    data: chatRooms,
-  }
-  if (req.skipNext === true) {
-    return chatRooms;
-  } else {
+  try {
+    const tokenData = req.tokenData;
+    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+    req.response = {
+      success: true,
+      message: `List of chatRooms for ${tokenData.userName}`,
+      data: chatRooms,
+    }
+    if (req.skipNext === true) {
+      return chatRooms;
+    } else {
+      next();
+    }
+  } catch (error) {
+    req.error = 500;
+    req.response = {
+      success: false,
+      message: `Get chatRoomList: Error accessing database: ${error}`,
+    }
     next();
   }
 });
@@ -54,26 +63,35 @@ exports.chatRoomDetail = asyncHandler(async (req, res, next) => {
 
 /* Create ChatRoom */
 exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
-  const tokenData = req.tokenData;
-
-  // Create chatRoom
-  const user = await UserModel.findById(tokenData._id).exec();
-  const newChatRoom = new ChatRoomModel({
-    owner: user._id,
-  });
-  await newChatRoom.save();
-  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
-  req.response = {
-    success: true,
-    message: `${tokenData.userName} created a new chatRoom`,
-    data: chatRooms,
+  try {
+    const tokenData = req.tokenData;
+    // Create chatRoom
+    const user = await UserModel.findById(tokenData._id).exec();
+    const newChatRoom = new ChatRoomModel({
+      owner: user._id,
+    });
+    await newChatRoom.save();
+    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+    req.response = {
+      success: true,
+      message: `${tokenData.userName} created a new chatRoom`,
+      data: chatRooms,
+    }
+    next();
+  } catch (error) {
+    req.error = 500;
+    req.response = {
+      success: false,
+      message: `Create chatRoom: Error accessing database: ${error}`,
+    }
+    next();
   }
-  next();
 });
 
 /* PUT chatRoom edits */
 exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
-  const tokenData = req.tokenData;
+  try {
+   const tokenData = req.tokenData;
   const chatRoom = await ChatRoomModel.findById(req.body.chatRoom).exec();
 
   // Modify Participants
@@ -114,13 +132,22 @@ exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
     data: chatRooms,
   }
   next();
+  } catch (error) {
+    req.error = 500;
+    req.response = {
+      success: false,
+      message: `Edit chatRoom: Error accessing database: ${error}`,
+    }
+    next();
+  }
 });
 
 /* Delete ChatRoom */
 /* I'm not exactly sure what this is going
    to return but it's here just incase */
 exports.chatRoomDelete = asyncHandler(async (req, res, next) => {
-  const tokenData = req.tokenData;
+  try {
+   const tokenData = req.tokenData;
 
   const deleteThisRoom = req.body.chatRoom;
   await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
@@ -133,6 +160,14 @@ exports.chatRoomDelete = asyncHandler(async (req, res, next) => {
     data: chatRooms,
   }
   next();
+  } catch (error) {
+    req.error = 500;
+    req.response = {
+      success: false,
+      message: `Delete chatRoom: Error accessing database: ${error}`,
+    }
+    next();
+  }
 });
 
 

@@ -76,22 +76,32 @@ exports.signUp = [
       // No errors in request body
       try {
         bcrypt.hash(password, 12, async(err, hashedPassword) => {
-          // Attempt to create a new user
+          // Create a new user
           const newUser = new UserModel({
             userName: userName,
             password: hashedPassword,
             email: email,
           });
 
-          // Attempt to save said user
+          // Save user
           await newUser.save();
 
           // Make a JWT
-          const payload = {
+          req.tokenData = {
             _id: newUser._id,
             userName: userName,
             email: email,
-          };
+          }
+
+          const payload = {
+            success: true,
+            message: 'Signup Successful 😃',
+            userData: {
+              userName: userName,
+              email: email,
+            },
+          }
+
           jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s' }, (err, token) => {
             if (err) {
               res.status(400).json({
@@ -116,7 +126,7 @@ exports.signUp = [
         res.status(400).json({
           success: false,
           message: 'Error signing up',
-        })
+        });
       }
     }
   })
