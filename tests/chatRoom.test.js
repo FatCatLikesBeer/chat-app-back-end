@@ -200,7 +200,7 @@ test('PUT new participants in chatRoom[1]', async () => {
 });
 
 /* PUT Changes to chatRoom[1], remove participant & change onwer */
-test('PUT Changes to chatRoom[1], remove participant & change onwer', async () => {
+test('PUT Changes to chatRoom[1]: remove participant & change onwer', async () => {
   let token;
   const res1 = await request(app)
     .post('/login')
@@ -262,8 +262,8 @@ test('GET chatRooms for new owner of chatRoom[1]', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  expect(parsedResult2.data.length).toBe(1);
-  expect(parsedResult2.data[0].participants.length).toBe(1);
+  expect(parsedResult2.data.length).toBe(2);
+  expect(parsedResult2.data[0].participants.length).toBe(2);
 });
 
 /* PUT No Token remove participant */

@@ -32,7 +32,7 @@ a PUT body request
 exports.chatRoomList = asyncHandler(async (req, res, next) => {
   try {
     const tokenData = req.tokenData;
-    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+    const chatRooms = await ChatRoomModel.find({ participants: tokenData._id }).exec();
     req.response = {
       success: true,
       message: `List of chatRooms for ${tokenData.userName}`,
@@ -69,6 +69,7 @@ exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
     const user = await UserModel.findById(tokenData._id).exec();
     const newChatRoom = new ChatRoomModel({
       owner: user._id,
+      participants: user._id,
     });
     await newChatRoom.save();
     const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
@@ -91,47 +92,47 @@ exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
 /* PUT chatRoom edits */
 exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
   try {
-   const tokenData = req.tokenData;
-  const chatRoom = await ChatRoomModel.findById(req.body.chatRoom).exec();
+    const tokenData = req.tokenData;
+    const chatRoom = await ChatRoomModel.findById(req.body.chatRoom).exec();
 
-  // Modify Participants
-  if (req.body.add) {
-    // For each element in the add array, only add
-    // element if not already in participants array
-    req.body.add.forEach(elem => {
-      if (!chatRoom.participants.includes(elem)) {
-        chatRoom.participants.push(elem);
-      }
-    });
-  }
-  // Remove participants
-  // This block of garbage exists because javascript...
-  // Find index of element, delete value at element, move
-  // empty element to the end, pop the end of array...
-  if (req.body.remove) {
-    req.body.remove.forEach(elem => {
-      delete chatRoom.participants[chatRoom.participants.indexOf(elem)];
-      chatRoom.participants.sort();
-      chatRoom.participants.pop();
-    });
-  }
+    // Modify Participants
+    if (req.body.add) {
+      // For each element in the add array, only add
+      // element if not already in participants array
+      req.body.add.forEach(elem => {
+        if (!chatRoom.participants.includes(elem)) {
+          chatRoom.participants.push(elem);
+        }
+      });
+    }
+    // Remove participants
+    // This block of garbage exists because javascript...
+    // Find index of element, delete value at element, move
+    // empty element to the end, pop the end of array...
+    if (req.body.remove) {
+      req.body.remove.forEach(elem => {
+        delete chatRoom.participants[chatRoom.participants.indexOf(elem)];
+        chatRoom.participants.sort();
+        chatRoom.participants.pop();
+      });
+    }
 
-  // Change Owners
-  chatRoom.owner = req.body.chown || chatRoom.owner;
+    // Change Owners
+    chatRoom.owner = req.body.chown || chatRoom.owner;
 
-  // Save modified chatRoom
-  await chatRoom.save();
+    // Save modified chatRoom
+    await chatRoom.save();
 
-  // Get updated list of chatRooms for user
-  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+    // Get updated list of chatRooms for user
+    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
 
-  // Save the JSON API response
-  req.response = {
-    success: true,
-    message: `${tokenData.userName} edited a chatRoom`,
-    data: chatRooms,
-  }
-  next();
+    // Save the JSON API response
+    req.response = {
+      success: true,
+      message: `${tokenData.userName} edited a chatRoom`,
+      data: chatRooms,
+    }
+    next();
   } catch (error) {
     req.error = 500;
     req.response = {
@@ -147,19 +148,19 @@ exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
    to return but it's here just incase */
 exports.chatRoomDelete = asyncHandler(async (req, res, next) => {
   try {
-   const tokenData = req.tokenData;
+    const tokenData = req.tokenData;
 
-  const deleteThisRoom = req.body.chatRoom;
-  await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
-  const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+    const deleteThisRoom = req.body.chatRoom;
+    await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
+    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
 
-  // Save the JSON API response
-  req.response = {
-    success: true,
-    message: 'chatRoom successfully deleted',
-    data: chatRooms,
-  }
-  next();
+    // Save the JSON API response
+    req.response = {
+      success: true,
+      message: 'chatRoom successfully deleted',
+      data: chatRooms,
+    }
+    next();
   } catch (error) {
     req.error = 500;
     req.response = {
