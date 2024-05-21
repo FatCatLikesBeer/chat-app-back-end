@@ -12,50 +12,50 @@ const UserModel = require('../models/users');
 
 exports.signUp = [
   body('userName')
-  .trim()
-  .isLength({ min: 3 })
-  .withMessage('Username character minimum: 3'),
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('Username character minimum: 3'),
 
   body('userName')
-  .trim()
-  .isLength({ max: 20 })
-  .withMessage('Username character maximum: 20'),
+    .trim()
+    .isLength({ max: 20 })
+    .withMessage('Username character maximum: 20'),
 
   body('userName')
-  .trim()
-  .notEmpty()
-  .withMessage('Username must not be empty'),
+    .trim()
+    .notEmpty()
+    .withMessage('Username must not be empty'),
 
   body('password')
-  .trim()
-  .isLength({ min: 8 })
-  .withMessage('Password character minimum: 8'),
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Password character minimum: 8'),
 
   body('email')
-  .trim()
-  .isEmail()
-  .withMessage('Invalid Email'),
+    .trim()
+    .isEmail()
+    .withMessage('Invalid Email'),
 
   // Making My own custom error validation 😃
   // Check if username already exists
   body('userName')
-  .trim()
-  .custom(async value => {
-    const existingUser = await UserModel.findOne({ userName: value }).exec();
-    if (existingUser) {
-      throw new Error('Username already exists');
-    }
-  }),
+    .trim()
+    .custom(async value => {
+      const existingUser = await UserModel.findOne({ userName: value }).exec();
+      if (existingUser) {
+        throw new Error('Username already exists');
+      }
+    }),
 
   // Check if email aready in use
   body('email')
-  .trim()
-  .custom(async value => {
-    const existingUser = await UserModel.findOne({ email: value }).exec();
-    if (existingUser) {
-      throw new Error('Email already in use');
-    }
-  }),
+    .trim()
+    .custom(async value => {
+      const existingUser = await UserModel.findOne({ email: value }).exec();
+      if (existingUser) {
+        throw new Error('Email already in use');
+      }
+    }),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
@@ -75,7 +75,7 @@ exports.signUp = [
     } else {
       // No errors in request body
       try {
-        bcrypt.hash(password, 12, async(err, hashedPassword) => {
+        bcrypt.hash(password, 12, async (err, hashedPassword) => {
           // Create a new user
           const newUser = new UserModel({
             userName: userName,
@@ -122,7 +122,7 @@ exports.signUp = [
             }
           });
         });
-      } catch(err) {
+      } catch (err) {
         res.status(400).json({
           success: false,
           message: 'Error signing up',

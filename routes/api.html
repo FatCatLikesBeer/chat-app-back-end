@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API Refrence</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+    body {
+      margin: 40px 10vw;
+    }
+    .request {
+      color: gold;
+    }
+    .success {
+      color: green;
+    }
+    .failure {
+      color: red;
+    }
+    .code {
+      border: solid 1px gold;
+      border-radius: 15px;
+      padding-top: 18px;
+    }
+    .section {
+      border: dashed 1px grey;
+      border-radius: 18px;
+      padding: 12px 24px 8px 24px;
+      margin-bottom: 24px;
+    }
+    .subsection {
+      margin-top: 42px;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>API Refrence</h1>
+    <h3>Routes</h3>
+    <menu>
+      <li><a href="#signup"><code>/signup</code></a></li>
+      <li><a href="#login"><code>/login</code></a></li>
+      <li><a href="#chatRoom"><code>/chatRoom</code></a></li>
+      <li><a href="#message"><code>/message</code></a></li>
+    </menu>
+    <div class="section">
+      <h3 id="signup"><pre>/signup</pre></h3>
+      <h5 class="subsection">POST</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /signup
+      {
+        userName: "20charLimit",
+        password: "theLongerTheBetter",
+        email: "contact@example.com"
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+    </div>
+    <div class="section">
+      <h3 id="login"><pre>/login</pre></h3>
+      <h5 class="subsection">POST</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /login
+      {
+        userName: "validUserName",
+        password: "validPassWord"
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: token,
+        data: {
+          userData: { userName: userName, email: queryUser.email },
+          chatRooms: chatRooms,
+        }
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        error: "Failure Reason"
+      }
+      </pre>
+    </div>
+    <div class="section">
+      <h3 id="chatRoom"><pre>/chatRoom</pre></h3>
+      <div class="method">
+      <h5 class="subsection">GET</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /chatRoom
+      {
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Array
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      </div>
+      <div class="method">
+      <h5 class="subsection">GET</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /chatRoom/:_id
+      {
+        chatRoom: chatRoom._id,
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Object
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      </div>
+      <h5 class="subsection">POST</h5>
+      <div class="method">
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /chatRoom
+      {
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Array
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      </div>
+      <div class="method">
+      <h5 class="subsection">PUT</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /chatRoom
+      {
+        chatRoom: chatRoom._id,
+        chown: User._id,
+        add: [
+          User1._id,
+          User2._id
+        ],
+        remove: [
+          User1._id,
+          User2._id
+        ]
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Array
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      </div>
+      <div class="method">
+      <h5 class="subsection">DELETE</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /chatRoom
+      {
+        chatRoom: chatRoom._id,
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Array
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      </div>
+    </div>
+    <div class="section">
+      <h3 id="message"><pre>/message</pre></h3>
+      <h5 class="subsection">GET</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /message
+      {
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Array
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      <h5 class="subsection">GET</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /message/:_id
+      {
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Object
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      <h5 class="subsection">POST</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /message
+      {
+        chatRoom: chatRoom._id,
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Object
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      <h5 class="subsection">PUT</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /message
+      {
+        chatRoom: chatRoom._id,
+        message: String,
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Object
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+      <h5 class="subsection">DELETE</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /message
+      {
+        message: message._id,
+        token: Object
+      }
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: String,
+        token: Object,
+        data: Object
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: String
+      }
+      </pre>
+    </div>
+  </body>
+  <script>
+    console.log("Well hello there");
+  </script>
+</html>

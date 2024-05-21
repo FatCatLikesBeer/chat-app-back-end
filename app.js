@@ -5,14 +5,11 @@ const asyncHandler = require('express-async-handler');
 const passport = require('passport');
 const bcrypt = require("bcryptjs");
 const path = require('path');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 
 require('dotenv').config();
 const LocalStrategy = require("passport-local").Strategy;
 const { createServer } = require('node:http');
 
-const loginRouter = require('./routes/loginRouter');
-const signUpRouter = require('./routes/signUpRouter');
 const apiRouter = require('./routes/api');
 
 const app = express();
@@ -35,7 +32,7 @@ if (serverState === "dev") {
 passport.use(
   new LocalStrategy(async (userName, password, done) => {
     try {
-      const user = await User.findOne({ userName: username });
+      const user = await User.findOne({ userName: userName });
       const match = await bcrypt.compare(password, user.password);
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
@@ -44,7 +41,7 @@ passport.use(
         return done(null, false, { message: "Incorrect password" });
       };
       return done(null, user);
-    } catch(err) {
+    } catch (err) {
       return done(err);
     }
   })
@@ -59,7 +56,7 @@ passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
     done(null, user);
-  } catch(err) {
+  } catch (err) {
     done(err);
   };
 });
@@ -71,9 +68,10 @@ app.get('/', (req, res) => {
 app.use('/apiv1', apiRouter);
 
 app.use((err, req, res, next) => {
+  console.log(err);
   res.status(500).json({
     success: false,
-    message: "SOMETHING WENT TERRIBLY WRONG 😫"
+    message: "SOMETHING WENT TERRIBLY WRONG 😫",
   });
 });
 

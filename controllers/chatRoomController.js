@@ -15,7 +15,7 @@ const ChatRoomModel = require('../models/chatrooms');
 Expected structure of
 a PUT body request
 {
-  chatRoom: ChatRoom._id,
+  chatRoom: chatRoom._id,
   chown: User._id,
   add: [
     User1._id,

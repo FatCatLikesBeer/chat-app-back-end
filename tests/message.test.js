@@ -1,11 +1,8 @@
 const request = require('supertest');
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
-const loginRouter = require('../routes/loginRouter.js');
-const chatRoomRouter = require('../routes/chatRoomRouter');
 const apiRouter = require('../routes/api');
 
 const UserModel = require('../models/users');
@@ -24,7 +21,7 @@ const participants = [];
 /* DO ALL THIS BEFORE RUNNING TESTS */
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
-  const mongoUri = await mongoServer.getUri();
+  const mongoUri = mongoServer.getUri();
   mongoose.connect(mongoUri);
 
   // Create Users

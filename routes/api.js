@@ -1,4 +1,6 @@
 const apiRouter = require('express').Router();
+const asyncHandler = require('express-async-handler');
+const path = require('path');
 
 const tokenMover = require('../middleware/tokenMover');
 const verifyToken = require('../middleware/verifyToken');
@@ -9,6 +11,9 @@ const signupRouter = require('../routes/signUpRouter');
 const chatRoomRouter = require('../routes/chatRoomRouter');
 const messageRouter = require('../routes/messageRouter');
 
+apiRouter.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'api.html'));
+});
 apiRouter.use('/signup', signupRouter);
 apiRouter.use('/login', loginRouter);
 apiRouter.use('/chatRoom', tokenMover, verifyToken, chatRoomRouter, payloadToJWT);

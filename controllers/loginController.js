@@ -16,13 +16,13 @@ const getChats = require('../controllers/chatRoomController');
 exports.test = [
   // User Not Found
   body('userName')
-  .trim()
-  .custom(async value => {
-    const existingUser = await UserModel.findOne({ userName: value }).exec();
-    if (!existingUser) {
-      throw new Error('Username or password is incorrect');
-    }
-  }),
+    .trim()
+    .custom(async value => {
+      const existingUser = await UserModel.findOne({ userName: value }).exec();
+      if (!existingUser) {
+        throw new Error('Username or password is incorrect');
+      }
+    }),
 
   asyncHandler(async (req, res, next) => {
     res.json({
@@ -34,39 +34,39 @@ exports.test = [
 
 exports.login = [
   body('userName')
-  .trim()
-  .isLength({ min: 3 })
-  .withMessage('Username or password is incorrect'),
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('Username or password is incorrect'),
 
   body('userName')
-  .trim()
-  .isLength({ max: 20 })
-  .withMessage('Username or password is incorrect'),
+    .trim()
+    .isLength({ max: 20 })
+    .withMessage('Username or password is incorrect'),
 
   body('userName')
-  .trim()
-  .notEmpty()
-  .withMessage('Username must not be empty'),
+    .trim()
+    .notEmpty()
+    .withMessage('Username must not be empty'),
 
   body('password')
-  .trim()
-  .isLength({ min: 8 })
-  .withMessage('Username or password is incorrect'),
+    .trim()
+    .isLength({ min: 8 })
+    .withMessage('Username or password is incorrect'),
 
   body('password')
-  .trim()
-  .notEmpty()
-  .withMessage('Password must not be empty'),
+    .trim()
+    .notEmpty()
+    .withMessage('Password must not be empty'),
 
   // User Not Found
   body('userName')
-  .trim()
-  .custom(async value => {
-    const existingUser = await UserModel.findOne({ userName: value }).exec();
-    if (!existingUser) {
-      throw new Error('Username or password is incorrect');
-    }
-  }),
+    .trim()
+    .custom(async value => {
+      const existingUser = await UserModel.findOne({ userName: value }).exec();
+      if (!existingUser) {
+        throw new Error('Username or password is incorrect');
+      }
+    }),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
@@ -128,6 +128,7 @@ exports.login = [
           console.error(error);
           res.json({
             success: false,
+            error: error
           });
         }
       }
