@@ -61,7 +61,12 @@
       {
         success: true,
         message: String,
-        token: Object
+        token: Object,
+        userData: {
+          userName: String,
+          email: String,
+          _id: String,
+        }
       }
       </pre>
       <h5 class="failure">Expected Failure Response</h5>
@@ -90,7 +95,11 @@
         message: String,
         token: token,
         data: {
-          userData: { userName: userName, email: queryUser.email },
+          userData: {
+            userName: String,
+            email: String,
+            _id: String,
+          },
           chatRooms: chatRooms,
         }
       }

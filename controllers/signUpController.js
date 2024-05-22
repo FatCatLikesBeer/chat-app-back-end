@@ -87,19 +87,10 @@ exports.signUp = [
           await newUser.save();
 
           // Make a JWT
-          req.tokenData = {
-            _id: newUser._id,
+          const payload = {
+            _id: newUser._id.toString(),
             userName: userName,
             email: email,
-          }
-
-          const payload = {
-            success: true,
-            message: 'Signup Successful 😃',
-            userData: {
-              userName: userName,
-              email: email,
-            },
           }
 
           jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '600s' }, (err, token) => {
@@ -112,11 +103,12 @@ exports.signUp = [
               // Send data back to client
               res.json({
                 success: true,
-                message: 'Signup Successful 😃',
+                message: "Signup Successful 😃",
                 token: token,
                 userData: {
-                  userName: userName,
-                  email: email,
+                  userName: payload.userName,
+                  email: payload.email,
+                  _id: payload._id,
                 },
               });
             }

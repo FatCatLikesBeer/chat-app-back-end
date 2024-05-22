@@ -111,7 +111,11 @@ exports.login = [
                   message: 'Login Successful 😃',
                   token: token,
                   data: {
-                    userData: { userName: userName, email: queryUser.email },
+                    userData: {
+                      userName: userName,
+                      email: queryUser.email,
+                      _id: queryUser._id,
+                    },
                     chatRooms: chatRooms,
                   }
                 });

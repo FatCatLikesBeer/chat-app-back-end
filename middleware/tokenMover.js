@@ -1,7 +1,7 @@
 // Token Verification Function
 function verifyToken(req, res, next) {
   // Get auth header value
-  const barerHeader = req.headers['authorization'];
+  const barerHeader = req.headers['cookie'];
 
   // Check if barerHeader is undefined
   if (typeof barerHeader !== 'undefined') {
