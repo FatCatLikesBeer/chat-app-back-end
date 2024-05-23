@@ -12,27 +12,42 @@
     <h1>Billy's Chat App</h1>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <p>About</p>
-        <p>Logout</p>
+        <p id="toggle_form">Signup</p>
+        <p id="logout">Logout</p>
       </div>
     </nav>
     <div id="notification">
     </div>
-    <form method="POST" id="signup_form">
-      <div class="mb-3">
-        <label for="email" class="form-label">Email address:</label>
-        <input type="email" class="form-control" id="email" name="email"/ >
-      </div>
-      <div class="mb-3">
-        <label for="userName" class="form-label">Username:</label>
-        <input type="text" class="form-control" id="userName" name="userName"/ >
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Password:</label>
-        <input type="password" class="form-control" id="password" name="password"/ >
-      </div>
-      <button type="submit" id="submit" class="btn btn-primary">Submit</button>
-    </form>
+    <div id="form_container" hidden>
+      <form method="POST" id="signup_form" hidden>
+        <h3>Signup</h3>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address:</label>
+          <input type="email" class="form-control" id="signup_email" name="email"/ >
+        </div>
+        <div class="mb-3">
+          <label for="userName" class="form-label">Username:</label>
+          <input type="text" class="form-control" id="signup_userName" name="userName"/ >
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password:</label>
+          <input type="password" class="form-control" id="signup_password" name="password"/ >
+        </div>
+        <button type="submit" id="signup_submit" class="btn btn-primary">Signup</button>
+      </form>
+      <form method="POST" id="login_form" hidden>
+        <h3>Login</h3>
+        <div class="mb-3">
+          <label for="userName" class="form-label">Username:</label>
+          <input type="text" class="form-control" id="login_userName" name="userName"/ >
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password:</label>
+          <input type="password" class="form-control" id="login_password" name="password"/ >
+        </div>
+        <button type="submit" id="login_submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
     <div id="app" hidden>
       <h1>APP GOES HERE</h1>
     </div>

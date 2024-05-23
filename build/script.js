@@ -1,4 +1,6 @@
-const form = document.getElementById('signup_form');
+const form_container = document.getElementById('form_container');
+const signup_form = document.getElementById('signup_form');
+const login_form = document.getElementById('login_form');
 const notification = document.getElementById('notification');
 const app = document.getElementById('app');
 
@@ -12,7 +14,7 @@ function showNotification(msg) {
 
 // Delete From Function
 function deleteForm() {
-  form.remove();
+  form_container.remove();
 }
 
 // Show app function
@@ -25,6 +27,29 @@ function showApp() {
 function setCookie(token) {
   document.cookie = "Barer " + token;
 }
+
+// Logout: Delete cookie
+function logout() {
+  console.log("Logging out");
+  setCookie('');
+}
+
+// Toggle Form
+const toggle = document.getElementById('toggle_form');
+toggle.addEventListener('click', () => {
+  if (toggle.innerText === "Signup") {
+    toggle.innerText = "Login"
+  } else {
+    toggle.innerText = "Signup"
+  }
+  if (toggle.innerText === "Signup") {
+    signup_form.setAttribute('hidden', '');
+    login_form.removeAttribute('hidden', '');
+  } else {
+    login_form.setAttribute('hidden', '');
+    signup_form.removeAttribute('hidden', '');
+  }
+});
 
 // On Load:
 // Send Token if it exists
@@ -41,6 +66,8 @@ fetch('/apiv1/chatRoom', {
     if (data.success) {
       showApp();
     } else {
+      form_container.removeAttribute('hidden');
+      login_form.removeAttribute('hidden');
     }
   })
   .catch(err => {
@@ -51,11 +78,11 @@ fetch('/apiv1/chatRoom', {
 // Logic for signup
 // If signup successful, delete form, show notification, load app
 // If signup fail, retain form, show notification.
-form.addEventListener('submit', function(event) {
+signup_form.addEventListener('submit', function(event) {
   event.preventDefault();
-  const userName = document.getElementById('userName').value;
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const userName = document.getElementById('signup_userName').value;
+  const email = document.getElementById('signup_email').value;
+  const password = document.getElementById('signup_password').value;
   fetch('/apiv1/signup', {
     method: 'POST',
     headers: {
@@ -71,7 +98,6 @@ form.addEventListener('submit', function(event) {
         showApp();
         setCookie(data.token);
       }
-      console.log(data.message);
     })
     .catch(error => {
       showNotification(error);
@@ -79,3 +105,39 @@ form.addEventListener('submit', function(event) {
       console.log(error);
     });
 });
+
+// Logic for login
+// If login successful, delete form, show notification, load app
+// If login fail, retain form, show notification.
+login_form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const userName = document.getElementById('login_userName').value;
+  const password = document.getElementById('login_password').value;
+  fetch('/apiv1/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ 'userName': userName, "password": password })
+  })
+    .then(response => response.json())
+    .then(data => {
+      showNotification(data.message);
+      // Successful login
+      if (data.success) {
+        showApp();
+        setCookie(data.token);
+      }
+    })
+    .catch(error => {
+      showNotification(error);
+      deleteForm();
+      console.log(error);
+    });
+});
+
+// Logout
+document.getElementById('logout').addEventListener('click', (event) => {
+  logout();
+  location.reload();
+})

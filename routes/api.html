@@ -51,9 +51,9 @@
       <pre class="code">
       route: /signup
       {
-        userName: "20charLimit",
-        password: "theLongerTheBetter",
-        email: "contact@example.com"
+        userName: String,
+        password: String,
+        email: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -61,11 +61,11 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         userData: {
           userName: String,
           email: String,
-          _id: String,
+          _id: String
         }
       }
       </pre>
@@ -84,8 +84,8 @@
       <pre class="code">
       route: /login
       {
-        userName: "validUserName",
-        password: "validPassWord"
+        userName: String,
+        password: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -93,14 +93,14 @@
       {
         success: true,
         message: String,
-        token: token,
+        token: String,
         data: {
           userData: {
             userName: String,
             email: String,
-            _id: String,
+            _id: String
           },
-          chatRooms: chatRooms,
+          chatRooms: Array
         }
       }
       </pre>
@@ -108,7 +108,7 @@
       <pre class="code">
       {
         success: false,
-        error: "Failure Reason"
+        error: String
       }
       </pre>
     </div>
@@ -120,7 +120,7 @@
       <pre class="code">
       route: /chatRoom
       {
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -128,7 +128,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Array
       }
       </pre>
@@ -146,8 +146,8 @@
       <pre class="code">
       route: /chatRoom/:_id
       {
-        chatRoom: chatRoom._id,
-        token: Object
+        chatRoom: String,
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -155,7 +155,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Object
       }
       </pre>
@@ -173,7 +173,7 @@
       <pre class="code">
       route: /chatRoom
       {
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -181,7 +181,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Array
       }
       </pre>
@@ -216,7 +216,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Array
       }
       </pre>
@@ -235,7 +235,7 @@
       route: /chatRoom
       {
         chatRoom: chatRoom._id,
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -243,7 +243,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Array
       }
       </pre>
@@ -263,7 +263,7 @@
       <pre class="code">
       route: /message
       {
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -271,7 +271,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Array
       }
       </pre>
@@ -287,7 +287,7 @@
       <pre class="code">
       route: /message/:_id
       {
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -295,7 +295,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Object
       }
       </pre>
@@ -312,7 +312,7 @@
       route: /message
       {
         chatRoom: chatRoom._id,
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -320,7 +320,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Object
       }
       </pre>
@@ -338,7 +338,7 @@
       {
         chatRoom: chatRoom._id,
         message: String,
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -346,7 +346,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Object
       }
       </pre>
@@ -363,7 +363,7 @@
       route: /message
       {
         message: message._id,
-        token: Object
+        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -371,7 +371,7 @@
       {
         success: true,
         message: String,
-        token: Object,
+        token: String,
         data: Object
       }
       </pre>
