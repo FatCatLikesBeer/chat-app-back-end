@@ -1,8 +1,10 @@
+import { menu } from './components/burgerMenuModal.js';
 const form_container = document.getElementById('form_container');
 const signup_form = document.getElementById('signup_form');
 const login_form = document.getElementById('login_form');
 const notification = document.getElementById('notification');
-const app = document.getElementById('app');
+const appContainer = document.getElementById('appContainer');
+const navbar = document.getElementById('navbar');
 
 // Show Notifications
 function showNotification(msg) {
@@ -20,7 +22,9 @@ function deleteForm() {
 // Show app function
 function showApp() {
   deleteForm();
-  app.removeAttribute('hidden');
+  navbar.remove();
+  menu.showMenu();
+  appContainer.removeAttribute('hidden');
 }
 
 // Set cookie function
@@ -28,10 +32,20 @@ function setCookie(token) {
   document.cookie = "Barer " + token;
 }
 
-// Logout: Delete cookie
-function logout() {
+// Logout
+export function logout() {
   console.log("Logging out");
-  setCookie('');
+  const logoutMessages = [
+    "Reloading: Hold Tight ⏲",
+    "Leaving so soon?! 😫",
+    "thankyoucomeagain ⏲",
+    "[placeholder_exit_message_index_3] 🤖",
+  ]
+  document.body.innerHTML = `<h3>${logoutMessages[Math.floor(Math.random() * logoutMessages.length)]}</h3>`;
+  setTimeout(() => {
+    location.reload();
+    setCookie('');
+  }, 500);
 }
 
 // Toggle Form
@@ -52,7 +66,7 @@ toggle.addEventListener('click', () => {
 });
 
 // On Load:
-// Send Token if it exists
+// Send Cookie/Token if it exists
 // If token valid, remove form, load app
 // If invalid or existant, do nothing.
 fetch('/apiv1/chatRoom', {
@@ -100,6 +114,7 @@ signup_form.addEventListener('submit', function(event) {
       }
     })
     .catch(error => {
+      // Fetch Failure
       showNotification(error);
       deleteForm();
       console.log(error);
@@ -136,8 +151,3 @@ login_form.addEventListener('submit', function(event) {
     });
 });
 
-// Logout
-document.getElementById('logout').addEventListener('click', (event) => {
-  logout();
-  location.reload();
-})

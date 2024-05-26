@@ -79,7 +79,7 @@ test('Testing out middleware refactoring', async () => {
 
   const res2 = await request(app)
     .get('/test')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 

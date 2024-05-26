@@ -1,3 +1,28 @@
 body {
   margin: 20px;
 }
+
+a {
+  cursor: pointer;
+}
+
+#menu {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+}
+
+#modal {
+  position: absolute;
+  margin: 8px;
+  top: 32px;
+  right: 12px;
+  background-color: gainsboro;
+  width: 240px;
+  padding: 8px;
+}
+
+menu {
+  padding: 0px;
+}

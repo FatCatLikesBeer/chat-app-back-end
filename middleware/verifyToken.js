@@ -9,13 +9,11 @@ const verifyToken = (req, res, next) => {
         message: "Forbidden",
       })
     } else {
-      console.log('verifyToken: tokenData', tokenData);
       req.tokenData = {
         _id: tokenData._id,
         userName: tokenData.userName,
         email: tokenData.email,
       }
-      console.log("verifyToken: req.tokenData", req.tokenData);
       next();
     }
   });

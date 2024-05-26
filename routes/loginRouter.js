@@ -1,4 +1,3 @@
-const asyncHandler = require('express-async-handler');
 const loginRouter = require('express').Router();
 const loginController = require('../controllers/loginController.js');
 

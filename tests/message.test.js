@@ -21,7 +21,7 @@ const participants = [];
 /* DO ALL THIS BEFORE RUNNING TESTS */
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
+  const mongoUri = await mongoServer.getUri();
   mongoose.connect(mongoUri);
 
   // Create Users
@@ -112,7 +112,7 @@ test('GET List of messages in a chatRoom', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -127,7 +127,7 @@ test('GET List of messages in a chatRoom', async () => {
     .send({
       chatRoom: chats[0]._id,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -157,7 +157,7 @@ test('POST some messages into a chatroom', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -173,7 +173,7 @@ test('POST some messages into a chatroom', async () => {
       chatRoom: chats[0]._id,
       message: "This post was made OUTSIDE the test and inside the controller 😃"
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -203,7 +203,7 @@ test('PUT an edit to a message', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -218,7 +218,7 @@ test('PUT an edit to a message', async () => {
     .send({
       chatRoom: chats[0]._id,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
@@ -232,7 +232,7 @@ test('PUT an edit to a message', async () => {
       chatRoom: message.chatRoom,
       message: message,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -263,7 +263,7 @@ test('DELETE a message', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -278,7 +278,7 @@ test('DELETE a message', async () => {
     .send({
       chatRoom: chats[0]._id,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
@@ -290,7 +290,7 @@ test('DELETE a message', async () => {
     .send({
       message: message,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -318,7 +318,7 @@ test('GET: chatRoom _id: undefined', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -333,7 +333,7 @@ test('GET: chatRoom _id: undefined', async () => {
     .send({
       chatRoom: 'undefined',
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(500);
 
@@ -362,7 +362,7 @@ test('POST: Bad chatRoom _id', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -378,7 +378,7 @@ test('POST: Bad chatRoom _id', async () => {
       chatRoom: `${chats[0]._id}lskjdfoieur`,
       message: "This post was made OUTSIDE the test and inside the controller 😃"
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(500);
 
@@ -407,7 +407,7 @@ test('PUT: missing message value', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -422,7 +422,7 @@ test('PUT: missing message value', async () => {
     .send({
       chatRoom: chats[0]._id,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
@@ -434,7 +434,7 @@ test('PUT: missing message value', async () => {
     .send({
       edit: "This post was made technically SAVED outside the test and inside the controller 😉",
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(500);
 
@@ -463,7 +463,7 @@ test('DELETE: malformed message _id', async () => {
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -478,7 +478,7 @@ test('DELETE: malformed message _id', async () => {
     .send({
       chatRoom: chats[0]._id,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
@@ -491,7 +491,7 @@ test('DELETE: malformed message _id', async () => {
     .send({
       message: message,
     })
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(500);
 
@@ -519,7 +519,7 @@ test('BAD Token', async () => {
   const token = "Bearer sldkfj2o8374lskdjf..skdfjlkxjcvolil98234.sldkfjowieur982734";
   const getListOfChatRooms = await request(app)
     .get('/message')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(403);
 

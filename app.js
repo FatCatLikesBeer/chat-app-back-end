@@ -5,6 +5,7 @@ const asyncHandler = require('express-async-handler');
 const passport = require('passport');
 const bcrypt = require("bcryptjs");
 const path = require('path');
+const WebSocket = require('ws');
 
 require('dotenv').config();
 const LocalStrategy = require("passport-local").Strategy;
@@ -14,6 +15,7 @@ const apiRouter = require('./routes/api');
 
 const app = express();
 const server = createServer(app);
+const wss = new WebSocket.Server({ server });
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -59,6 +61,25 @@ passport.deserializeUser(async (id, done) => {
   } catch (err) {
     done(err);
   };
+});
+
+// WebSocket Server
+wss.on('connection', (ws) => {
+  console.log('New WebSocket client connected');
+
+  ws.on('message', (message) => {
+    const messageString = message.toString();
+
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(messageString);
+      }
+    });
+  });
+
+  ws.on('close', () => {
+    console.log("WebSocket client disconnected");
+  });
 });
 
 // Routing

@@ -7,7 +7,7 @@ const MessageSchema = new Schema({
     _id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     userName: { type: String, required: true },
   },
-  chatRoom: { type: Schema.Types.ObjectId, ref: "ChatRoom", required: true},
+  chatRoom: { type: Schema.Types.ObjectId, ref: "ChatRoom", required: true },
   dateCreated: { type: Date, default: Date.now },
   message: { type: String, required: true },
   prevMessages: [{

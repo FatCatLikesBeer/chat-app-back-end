@@ -85,7 +85,7 @@ test('GET list of chatRooms', async () => {
 
   const res2 = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -116,7 +116,7 @@ test('POST a new chatRoom', async () => {
 
   const res2 = await request(app)
     .post('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -148,7 +148,7 @@ test('PUT new participants in a chatRoom[0]', async () => {
 
   const res2 = await request(app)
     .put('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .send({
       chatRoom: chats[0],
       add: [participants[0], participants[1]],
@@ -184,7 +184,7 @@ test('PUT new participants in chatRoom[1]', async () => {
 
   const res2 = await request(app)
     .put('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .send({
       chatRoom: chats[1],
       add: [participants[0], participants[1]],
@@ -218,7 +218,7 @@ test('PUT Changes to chatRoom[1]: remove participant & change onwer', async () =
 
   const res2 = await request(app)
     .put('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .send({
       chatRoom: chats[1],
       chown: participants[1],
@@ -254,7 +254,7 @@ test('GET chatRooms for new owner of chatRoom[1]', async () => {
 
   const res2 = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
 
@@ -311,7 +311,7 @@ test('PUT: BAD TOKEN new chatRoom owner', async () => {
 
   const res2 = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(403);
 
@@ -341,7 +341,7 @@ test('DELETE a chatRoom', async () => {
 
   const getChats = await request(app)
     .get('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .expect(200)
 
   const getChatsParsed = JSON.parse(getChats.text);
@@ -350,7 +350,7 @@ test('DELETE a chatRoom', async () => {
 
   const res2 = await request(app)
     .delete('/chatRoom')
-    .set('Authorization', token)
+    .set('cookie', token)
     .send({
       chatRoom: chatRooms[0],
     })

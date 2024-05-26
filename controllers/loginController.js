@@ -13,6 +13,7 @@ const UserModel = require('../models/users');
 const ChatRoomModel = require('../models/chatrooms');
 const getChats = require('../controllers/chatRoomController');
 
+// This is here to test creating a custom body-parser function
 exports.test = [
   // User Not Found
   body('userName')
@@ -23,7 +24,6 @@ exports.test = [
         throw new Error('Username or password is incorrect');
       }
     }),
-
   asyncHandler(async (req, res, next) => {
     res.json({
       success: true,
@@ -143,6 +143,6 @@ exports.login = [
 exports.logout = asyncHandler(async (req, res, next) => {
   res.json({
     success: true,
-    message: 'API LOTOUT GET working',
+    message: 'API LOGOUT GET working',
   });
 });
