@@ -110,6 +110,7 @@ exports.login = [
                   success: true,
                   message: 'Login Successful 😃',
                   token: token,
+                  userName: userName,
                   data: {
                     userData: {
                       userName: userName,

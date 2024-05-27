@@ -4,6 +4,7 @@ const signup_form = document.getElementById('signup_form');
 const login_form = document.getElementById('login_form');
 const notification = document.getElementById('notification');
 const appContainer = document.getElementById('app_container');
+const title = document.getElementById('title');
 
 // Show Notifications
 function showNotification(msg) {
@@ -22,10 +23,11 @@ function deleteForm() {
 }
 
 // Show app function
-function showApp() {
+function showApp(name) {
   deleteForm();
   menu.showMenu();
   appContainer.removeAttribute('hidden');
+  title.innerText = `${name}`;
 }
 
 // Set cookie function
@@ -82,7 +84,8 @@ fetch('/apiv1/chatRoom', {
   .then(data => {
     showNotification(data.message);
     if (data.success) {
-      showApp();
+      console.log(data);
+      showApp(data.userName);
     } else {
       form_container.removeAttribute('hidden');
       login_form.removeAttribute('hidden');
@@ -113,7 +116,7 @@ signup_form.addEventListener('submit', function(event) {
       showNotification(data.message);
       // Successful Signup
       if (data.success) {
-        showApp();
+        showApp(data.userName);
         setCookie(data.token);
       }
     })
@@ -145,7 +148,7 @@ login_form.addEventListener('submit', function(event) {
       showNotification(data.message);
       // Successful login
       if (data.success) {
-        showApp();
+        showApp(data.userName);
         setCookie(data.token);
       }
     })

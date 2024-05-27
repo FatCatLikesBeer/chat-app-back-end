@@ -105,6 +105,7 @@ exports.signUp = [
                 success: true,
                 message: "Signup Successful 😃",
                 token: token,
+                userName: payload.userName,
                 userData: {
                   userName: payload.userName,
                   email: payload.email,
