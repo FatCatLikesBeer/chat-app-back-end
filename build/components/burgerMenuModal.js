@@ -1,5 +1,6 @@
 import { logout } from '../script.js';
 const header = document.getElementById('header');
+const appContainer = document.getElementById('app_container');
 
 // Create Menu Icon & Attributes
 const menuIcon = document.createElement('a');
@@ -17,6 +18,8 @@ modalContainer.setAttribute('id', 'modal');
 modalContainer.setAttribute('hidden', '');
 modalContainer.innerHTML = "<menu><li><a id='logout'>Logout</a></li></menu>"
 document.body.prepend(modalContainer);
+//I would like to do the code below but it doesn't want to work
+//appContainer.prepend(modalContainer);
 
 // Menu Click Interaction
 let modalOpen = false;
@@ -47,3 +50,4 @@ export const menu = {
     }
   },
 }
+

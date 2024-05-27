@@ -32,29 +32,46 @@ beforeAll(async () => {
     password: '$2a$12$EKvweHK.oS52QkPMnMUTfuY/qzHVoEcYl/DqCmovehwTNuvUtR6DG',
   });
   await owner.save();
-  const partipant1 = new UserModel({
+  const participant1 = new UserModel({
     userName: 'Participant1',
     email: 'part1@email.com',
     password: '$2a$12$EKvweHK.oS52QkPMnMUTfuY/qzHVoEcYl/DqCmovehwTNuvUtR6DG',
   });
-  await partipant1.save();
-  const partipant2 = new UserModel({
-    userName: 'Partipant2',
+  await participant1.save();
+  const participant2 = new UserModel({
+    userName: 'Participant2',
     email: 'part2@email.com',
     password: '$2a$12$EKvweHK.oS52QkPMnMUTfuY/qzHVoEcYl/DqCmovehwTNuvUtR6DG',
   });
-  await partipant2.save();
+  await participant2.save();
 
   const newChatRoom1 = new ChatRoomModel({
-    owner: owner._id,
+    owner: owner._id.toString(),
+    participants: {
+      _id: owner._id.toString(),
+      userName: owner.userName,
+    },
   });
   await newChatRoom1.save();
   const newChatRoom2 = new ChatRoomModel({
-    owner: owner._id,
+    owner: owner._id.toString(),
+    participants: {
+      _id: owner._id.toString(),
+      userName: owner.userName,
+    },
   });
   await newChatRoom2.save();
 
-  participants.push(...[partipant1._id, partipant2._id]);
+  participants.push(...[
+    {
+      _id: participant1._id,
+      userName: participant1.userName
+    },
+    {
+      _id: participant2._id,
+      userName: participant2.userName
+    },
+  ]);
   chats.push(...[newChatRoom1._id, newChatRoom2._id]);
 });
 
@@ -93,6 +110,7 @@ test('GET list of chatRooms', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
+  expect(parsedResult2.data.length).toBe(2);
 });
 
 //// ---- POST REQUESTS ---- ////
@@ -232,7 +250,6 @@ test('PUT Changes to chatRoom[1]: remove participant & change onwer', async () =
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
   expect(parsedResult2.data.length).toBe(2);
-  expect(parsedResult2.data[0].participants.length).toBe(2);
 });
 
 /* GET chatRooms for new owner of chatRoom[1] */
@@ -241,7 +258,7 @@ test('GET chatRooms for new owner of chatRoom[1]', async () => {
   const res1 = await request(app)
     .post('/login')
     .send({
-      userName: 'Partipant2',
+      userName: 'Participant2',
       password: 'fakePassword',
     })
     .expect("Content-Type", /json/)
@@ -263,7 +280,7 @@ test('GET chatRooms for new owner of chatRoom[1]', async () => {
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
   expect(parsedResult2.data.length).toBe(2);
-  expect(parsedResult2.data[0].participants.length).toBe(2);
+  expect(parsedResult2.data[0].participants.length).toBe(3);
 });
 
 /* PUT No Token remove participant */

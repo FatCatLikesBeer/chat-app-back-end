@@ -18,8 +18,8 @@ a PUT body request
   chatRoom: chatRoom._id,
   chown: User._id,
   add: [
-    User1._id,
-    User2._id
+    { _id: User1._id, userName: User1.userName },
+    { _id: User2._id, userName: User2.userName },
   ],
   remove: [
     User1._id,
@@ -32,7 +32,7 @@ a PUT body request
 exports.chatRoomList = asyncHandler(async (req, res, next) => {
   try {
     const tokenData = req.tokenData;
-    const chatRooms = await ChatRoomModel.find({ participants: tokenData._id }).exec();
+    const chatRooms = await ChatRoomModel.find({ participants: { $elemMatch: { _id: tokenData._id.toString() } } }).exec();
     req.response = {
       success: true,
       message: `List of chatRooms for ${tokenData.userName}`,
@@ -69,7 +69,7 @@ exports.chatRoomCreate = asyncHandler(async (req, res, next) => {
     const user = await UserModel.findById(tokenData._id).exec();
     const newChatRoom = new ChatRoomModel({
       owner: user._id,
-      participants: user._id,
+      participants: [{ _id: user._id, userName: user.userName }],
     });
     await newChatRoom.save();
     const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
@@ -97,34 +97,45 @@ exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
 
     // Modify Participants
     if (req.body.add) {
-      // For each element in the add array, only add
+      // For each element in the req.body.add, only add
       // element if not already in participants array
       req.body.add.forEach(elem => {
-        if (!chatRoom.participants.includes(elem)) {
+        if (!chatRoom.participants.some(function(chatters) { chatters._id.toString() === elem._id.toString() })) {
           chatRoom.participants.push(elem);
         }
       });
     }
+
     // Remove participants
-    // This block of garbage exists because javascript...
-    // Find index of element, delete value at element, move
-    // empty element to the end, pop the end of array...
+    // For each elem in req.body.remove
+    // And for each elem in chatRoom.participants
+    // If they math, remove matching element from chatRoom.participants
     if (req.body.remove) {
       req.body.remove.forEach(elem => {
-        delete chatRoom.participants[chatRoom.participants.indexOf(elem)];
-        chatRoom.participants.sort();
-        chatRoom.participants.pop();
+        chatRoom.participants.forEach((chatter, index) => {
+          if (chatter._id.toString() === elem._id.toString()) {
+            chatRoom.participants.splice(index, 1);
+          }
+        });
       });
     }
 
     // Change Owners
-    chatRoom.owner = req.body.chown || chatRoom.owner;
+    if (req.body.chown) {
+      // Make sure the current user requesting
+      // to chown is the actual chatRoom owner
+      if (chatRoom.owner.toString() === tokenData._id.toString()) {
+        chatRoom.owner = req.body.chown;
+      } else {
+        throw new Error("Not authorized to change owner");
+      }
+    }
 
     // Save modified chatRoom
     await chatRoom.save();
 
     // Get updated list of chatRooms for user
-    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id.toString() }).exec();
 
     // Save the JSON API response
     req.response = {

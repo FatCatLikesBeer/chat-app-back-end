@@ -202,8 +202,8 @@
         chatRoom: chatRoom._id,
         chown: User._id,
         add: [
-          User1._id,
-          User2._id
+          { _id: User1._id, userName: User1.userName },
+          { _id: User2._id, userName: User2.userName },
         ],
         remove: [
           User1._id,

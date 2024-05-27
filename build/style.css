@@ -6,6 +6,11 @@ a {
   cursor: pointer;
 }
 
+#toggle_form {
+  cursor: pointer;
+  margin-left: 20px;
+}
+
 #menu {
   position: absolute;
   top: 12px;

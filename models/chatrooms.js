@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 const ChatRoomSchema = new Schema({
   owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
   participants: [{
-    type: Schema.Types.ObjectId,
-    ref: "User",
+    _id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userName: { type: String, require: true }
   }],
   dateCreated: { type: Date, default: Date.now },
   privacy: {

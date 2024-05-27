@@ -3,8 +3,7 @@ const form_container = document.getElementById('form_container');
 const signup_form = document.getElementById('signup_form');
 const login_form = document.getElementById('login_form');
 const notification = document.getElementById('notification');
-const appContainer = document.getElementById('appContainer');
-const navbar = document.getElementById('navbar');
+const appContainer = document.getElementById('app_container');
 
 // Show Notifications
 function showNotification(msg) {
@@ -12,6 +11,9 @@ function showNotification(msg) {
   message.innerText = msg;
   notification.replaceChildren(message);
   notification.removeAttribute('hidden');
+  setTimeout(() => {
+    notification.setAttribute('hidden', '');
+  }, 6000);
 }
 
 // Delete From Function
@@ -22,7 +24,6 @@ function deleteForm() {
 // Show app function
 function showApp() {
   deleteForm();
-  navbar.remove();
   menu.showMenu();
   appContainer.removeAttribute('hidden');
 }
@@ -34,7 +35,6 @@ function setCookie(token) {
 
 // Logout
 export function logout() {
-  console.log("Logging out");
   const logoutMessages = [
     "Reloading: Hold Tight ⏲",
     "Leaving so soon?! 😫",
@@ -59,9 +59,13 @@ toggle.addEventListener('click', () => {
   if (toggle.innerText === "Signup") {
     signup_form.setAttribute('hidden', '');
     login_form.removeAttribute('hidden', '');
+    signup_form.removeChild(toggle);
+    login_form.appendChild(toggle);
   } else {
     login_form.setAttribute('hidden', '');
     signup_form.removeAttribute('hidden', '');
+    login_form.removeChild(toggle);
+    signup_form.appendChild(toggle);
   }
 });
 
@@ -137,6 +141,7 @@ login_form.addEventListener('submit', function(event) {
   })
     .then(response => response.json())
     .then(data => {
+      console.log(data);
       showNotification(data.message);
       // Successful login
       if (data.success) {
