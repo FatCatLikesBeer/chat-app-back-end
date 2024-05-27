@@ -31,3 +31,46 @@ a {
 menu {
   padding: 0px;
 }
+
+#app_container {
+  display: flex;
+  height: 90vh;
+}
+
+#chatRooms_container {
+  width: 20vw;
+  border: 1px solid gold;
+}
+
+#messages_container {
+  width: 70vw;
+  border: 1px solid white;
+}
+
+.chat_container {
+  padding: 2px 12px;
+  height: 80px;
+  cursor: pointer;
+}
+
+.msg_container {
+  cursor: pointer;
+}
+
+.msg_message {
+  color: white;
+  font-size: 12px;
+}
+
+.msg_author {
+  color: grey;
+  font-size: 8px;
+}
+
+.msg_sender {
+  background-color: darkblue;
+}
+
+.msg_recipiant {
+  background-color: darkgrey;
+}

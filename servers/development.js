@@ -16,17 +16,30 @@ const bcrypt = require('bcryptjs');
   mongoose.connect(mongoUri);
 
   // Create User
+  let billy;
+  let silly;
   bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
-    const billy = new UserModel({
+    billy = new UserModel({
       userName: 'billy',
       email: 'itisbilly@gmail.com',
       password: hashedPassword,
     });
     await billy.save();
+  });
+  bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
+    silly = new UserModel({
+      userName: 'silly',
+      email: 'silly@site.com',
+      password: hashedPassword,
+    });
+    await silly.save();
 
     const newChatroom = new ChatRoomModel({
       owner: billy._id.toString(),
-      participants: [{ _id: billy._id.toString(), userName: billy.userName }],
+      participants: [
+        { _id: billy._id.toString(), userName: billy.userName },
+        { _id: silly._id.toString(), userName: silly.userName }
+      ],
     });
     await newChatroom.save();
 
@@ -36,13 +49,12 @@ const bcrypt = require('bcryptjs');
       message: "First message!",
     });
     await newMessage.save();
-  });
-  bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
-    const silly = new UserModel({
-      userName: 'silly',
-      email: 'silly@site.com',
-      password: hashedPassword,
+
+    const secondMessage = new MessageModel({
+      author: { _id: silly._id.toString(), userName: silly.userName },
+      chatRoom: newChatroom._id.toString(),
+      message: "Silly here, this is the second message!"
     });
-    await silly.save();
+    await secondMessage.save();
   });
 })();

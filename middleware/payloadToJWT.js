@@ -21,6 +21,11 @@ const sendPayload = asyncHandler(async (req, res, next) => {
         message: 'Error generating authentication data',
       });
     } else {
+      response.userData = {
+        _id: req.tokenData._id.toString(),
+        userName: req.tokenData.userName,
+        email: req.token.email,
+      }
       response.userName = req.tokenData.userName;
       response.token = token;
       if (errorFlag != 'undefined') {

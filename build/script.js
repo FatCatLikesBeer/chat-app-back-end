@@ -1,13 +1,18 @@
 import { menu } from './components/burgerMenuModal.js';
+import { populateChats } from './components/chatRoom.js';
+const title = document.getElementById('title');
 const form_container = document.getElementById('form_container');
 const signup_form = document.getElementById('signup_form');
 const login_form = document.getElementById('login_form');
 const notification = document.getElementById('notification');
 const appContainer = document.getElementById('app_container');
-const title = document.getElementById('title');
+
+// Login, signup, & page refresh logic
+import './components/login.js';
+import './components/signup.js';
 
 // Show Notifications
-function showNotification(msg) {
+export function showNotification(msg) {
   const message = document.createElement('p');
   message.innerText = msg;
   notification.replaceChildren(message);
@@ -18,12 +23,12 @@ function showNotification(msg) {
 }
 
 // Delete From Function
-function deleteForm() {
+export function deleteForm() {
   form_container.remove();
 }
 
 // Show app function
-function showApp(name) {
+export function showApp(name) {
   deleteForm();
   menu.showMenu();
   appContainer.removeAttribute('hidden');
@@ -31,7 +36,7 @@ function showApp(name) {
 }
 
 // Set cookie function
-function setCookie(token) {
+export function setCookie(token) {
   document.cookie = "Barer " + token;
 }
 
@@ -84,8 +89,8 @@ fetch('/apiv1/chatRoom', {
   .then(data => {
     showNotification(data.message);
     if (data.success) {
-      console.log(data);
-      showApp(data.userName);
+      showApp(data.userData.userName);
+      populateChats(data.data, data.userData._id.toString());
     } else {
       form_container.removeAttribute('hidden');
       login_form.removeAttribute('hidden');
@@ -96,66 +101,4 @@ fetch('/apiv1/chatRoom', {
     showNotification(err);
   });
 
-// Logic for signup
-// If signup successful, delete form, show notification, load app
-// If signup fail, retain form, show notification.
-signup_form.addEventListener('submit', function(event) {
-  event.preventDefault();
-  const userName = document.getElementById('signup_userName').value;
-  const email = document.getElementById('signup_email').value;
-  const password = document.getElementById('signup_password').value;
-  fetch('/apiv1/signup', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 'userName': userName, "email": email, "password": password })
-  })
-    .then(response => response.json())
-    .then(data => {
-      showNotification(data.message);
-      // Successful Signup
-      if (data.success) {
-        showApp(data.userName);
-        setCookie(data.token);
-      }
-    })
-    .catch(error => {
-      // Fetch Failure
-      showNotification(error);
-      deleteForm();
-      console.log(error);
-    });
-});
-
-// Logic for login
-// If login successful, delete form, show notification, load app
-// If login fail, retain form, show notification.
-login_form.addEventListener('submit', function(event) {
-  event.preventDefault();
-  const userName = document.getElementById('login_userName').value;
-  const password = document.getElementById('login_password').value;
-  fetch('/apiv1/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 'userName': userName, "password": password })
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      showNotification(data.message);
-      // Successful login
-      if (data.success) {
-        showApp(data.userName);
-        setCookie(data.token);
-      }
-    })
-    .catch(error => {
-      showNotification(error);
-      deleteForm();
-      console.log(error);
-    });
-});
-
+// App logic

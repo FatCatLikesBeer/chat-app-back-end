@@ -110,15 +110,12 @@ exports.login = [
                   success: true,
                   message: 'Login Successful 😃',
                   token: token,
-                  userName: userName,
-                  data: {
-                    userData: {
-                      userName: userName,
-                      email: queryUser.email,
-                      _id: queryUser._id,
-                    },
-                    chatRooms: chatRooms,
-                  }
+                  chatRooms: chatRooms,
+                  userData: {
+                    userName: userName,
+                    email: queryUser.email,
+                    _id: queryUser._id,
+                  },
                 });
               }
             });

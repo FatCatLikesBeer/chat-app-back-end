@@ -24,7 +24,7 @@ exports.messageDetail = asyncHandler(async (req, res, next) => {
 /* GET messages */
 exports.messageList = asyncHandler(async (req, res, next) => {
   try {
-    const chatRoom = req.body.chatRoom;
+    const chatRoom = req.params.chatRoom;
     const listOfMessages = await MessageModel.find({ chatRoom: chatRoom }).sort({ dateCreated: -1 }).exec();
     req.response = {
       message: 'List of messages successfully retrieved',

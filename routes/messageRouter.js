@@ -2,7 +2,7 @@ const messageRouter = require('express').Router();
 const messageController = require("../controllers/messageController");
 
 /* Get Messages */
-messageRouter.get('/', messageController.messageList);
+messageRouter.get('/:chatRoom', messageController.messageList);
 
 /* Create Message */
 messageRouter.post('/', messageController.messageCreate);
@@ -14,6 +14,6 @@ messageRouter.put('/', messageController.messageEdit);
 messageRouter.delete('/', messageController.messageDelete);
 
 /* Get Message Detail */
-messageRouter.get('/:id', messageController.messageDetail);
+// messageRouter.get('/:id', messageController.messageDetail);
 
 module.exports = messageRouter;
