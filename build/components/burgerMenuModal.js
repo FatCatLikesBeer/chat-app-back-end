@@ -15,31 +15,57 @@ menuContainer.appendChild(menuIcon);
 // Create Modal & Attributes
 const modalContainer = document.createElement('div');
 modalContainer.setAttribute('id', 'modal');
-modalContainer.setAttribute('hidden', '');
+modalContainer.classList.add('close');
 modalContainer.innerHTML = "<menu><li><a id='logout'>Logout</a></li></menu>"
 document.body.prepend(modalContainer);
 //I would like to do the code below but it doesn't want to work
 //appContainer.prepend(modalContainer);
 
 // Menu Click Interaction
-let modalOpen = false;
+// Toggle modalOpen
+let isModalOpen = false;
 menuIcon.addEventListener('click', () => {
-  modalOpen = !modalOpen;
-  if (modalOpen) {
-    modalContainer.removeAttribute('hidden');
-    menuIcon.innerText = 'close';
+  isModalOpen = !isModalOpen;
+  if (isModalOpen) {
+    modalOpen();
   } else {
-    modalContainer.setAttribute('hidden', '');
-    menuIcon.innerText = 'menu';
+    modalClose();
   }
-  console.log('Menu Clicked');
+});
+
+function modalClose() {
+  modal.classList.remove('open');
+  modal.classList.add('close');
+  menuIcon.innerText = 'menu';
+}
+
+function modalOpen() {
+  modal.classList.remove('close');
+  modal.classList.add('open');
+  menuIcon.innerText = 'close';
+}
+
+// Close modal if click outside of modal
+document.addEventListener('click', (event) => {
+  if (isModalOpen === true && !modalContainer.contains(event.target) && !menuContainer.contains(event.target)) {
+    modalClose();
+    isModalOpen = !isModalOpen;
+  }
+});
+
+// Close modal if press escape
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && modal.classList.contains('open')) {
+    modalClose();
+    isModalOpen = !isModalOpen;
+  }
 });
 
 document.getElementById('logout').addEventListener('click', () => {
   logout();
 });
 
-// Export function to the call the menu in and out of existence
+// Export function to the call the menu icon in & out of existence
 export const menu = {
   showMenu() {
     header.appendChild(menuContainer);

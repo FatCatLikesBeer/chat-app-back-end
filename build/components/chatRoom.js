@@ -1,5 +1,5 @@
 const chatRoom_container = document.getElementById('chatRooms_container');
-import { showNotification } from '../script.js';
+import { showNotification, setCookie } from '../script.js';
 import { populateMessages } from './messages.js';
 
 export function populateChats(chatRoomArray, userId) {
@@ -11,13 +11,18 @@ export function populateChats(chatRoomArray, userId) {
         chatRoom_element.setAttribute('class', 'chat_container');
         chatRoom_element.setAttribute('id', `${element._id.toString()}`);
         // Populate chatContainer with userNames
+        // I'm creating an allUserNames anchor so it works well with vimium
+        const allUserNames = document.createElement('a');
+        allUserNames.setAttribute('class', 'participants');
         element.participants.forEach((elem) => {
-          if (elem._id.toString() != element.owner.toString()) {
+          if (elem._id.toString() != userId.toString()) {
             const userName = document.createElement('p');
+            userName.setAttribute('class', 'participant');
             userName.innerText = `${elem.userName}`;
-            chatRoom_element.appendChild(userName);
+            allUserNames.appendChild(userName);
           }
         });
+        chatRoom_element.appendChild(allUserNames);
 
         // Add chatContainer to chatRooms_container
         chatRoom_container.appendChild(chatRoom_element);
@@ -36,6 +41,7 @@ export function populateChats(chatRoomArray, userId) {
               if (data.success) {
                 console.log(data);
                 populateMessages(data.data, userId);
+                setCookie(data.token);
               } else {
                 console.error(data.message);
                 throw new Error("Error fetching messages: /components/chatRoom.js", data.message);

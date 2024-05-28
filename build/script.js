@@ -100,5 +100,3 @@ fetch('/apiv1/chatRoom', {
     console.error(err);
     showNotification(err);
   });
-
-// App logic
