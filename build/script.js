@@ -55,7 +55,7 @@ export function logout() {
   }, 500);
 }
 
-// Toggle Form
+// Toggle Form between login & signup
 const toggle = document.getElementById('toggle_form');
 toggle.addEventListener('click', () => {
   if (toggle.innerText === "Signup") {
@@ -79,7 +79,7 @@ toggle.addEventListener('click', () => {
 // On Load:
 // Send Cookie/Token if it exists
 // If token valid, remove form, load app
-// If invalid or existant, do nothing.
+// If invalid or non-existant, do nothing.
 fetch('/apiv1/chatRoom', {
   headers: {
     'Content-Type': 'application/json',
@@ -100,3 +100,6 @@ fetch('/apiv1/chatRoom', {
     console.error(err);
     showNotification(err);
   });
+
+// Message Bar & Chats menu
+import './components/messageBar.js';

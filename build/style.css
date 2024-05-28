@@ -57,6 +57,19 @@ menu {
 
 .app_section {
   display: flex;
+  position: relative;
+}
+
+#chatRooms_section {
+}
+
+#messages_section {
+}
+
+#message_bar_container {
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 8px;
 }
 
 #chatRooms_container {

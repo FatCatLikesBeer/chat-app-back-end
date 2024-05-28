@@ -52,6 +52,10 @@ export function populateChats(chatRoomArray, userId) {
               console.error(err);
             });
 
+          /* Appending The message_bar element should go somewhere here */
+          /* It will need the information from each chatroom */
+          /* The message bar send button & event listener will need the chatRoom._id */
+          /* The message bar & button should have their element id be the chatRoom._id.toString() */
         });
       });
     } else {
