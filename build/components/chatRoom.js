@@ -39,7 +39,7 @@ export function populateChats(chatRoomArray, userId) {
             .then(response => response.json())
             .then(data => {
               if (data.success) {
-                console.log(data);
+                removeValues();
                 populateMessages(data.data, userId);
                 setCookie(data.token);
               } else {
@@ -52,14 +52,17 @@ export function populateChats(chatRoomArray, userId) {
               console.error(err);
             });
 
-          /* Appending The message_bar element should go somewhere here */
+
+          /* Appending The message_bar element should go SOMEWHERE AROUND HERE*/
           /* It will need the information from each chatroom */
           /* The message bar send button & event listener will need the chatRoom._id */
           /* The message bar & button should have their element id be the chatRoom._id.toString() */
+          /* You will need to add the send button event listener here */
+          /* Don't forget to remove previous event listeners */
         });
       });
     } else {
-      // If argument is an not an array with content
+      // If condition/argument is an not an array with content
       const chatContainer = document.createElement('div');
       chatContainer.setAttribute('class', 'chat_container');
       chatContainer.innerHTML = "<h3>You have no messages!</h3>"

@@ -100,6 +100,3 @@ fetch('/apiv1/chatRoom', {
     console.error(err);
     showNotification(err);
   });
-
-// Message Bar & Chats menu
-import './components/messageBar.js';
