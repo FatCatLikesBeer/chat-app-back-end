@@ -123,10 +123,7 @@ test('GET List of messages in a chatRoom', async () => {
   token = `Bearer ${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
-    .get('/message')
-    .send({
-      chatRoom: chats[0]._id,
-    })
+    .get(`/message/${chats[0]._id.toString()}`)
     .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
@@ -214,10 +211,7 @@ test('PUT an edit to a message', async () => {
   token = `Bearer ${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
-    .get('/message')
-    .send({
-      chatRoom: chats[0]._id,
-    })
+    .get(`/message/${chats[0]._id}`)
     .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
@@ -274,7 +268,7 @@ test('DELETE a message', async () => {
   token = `Bearer ${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
-    .get('/message')
+    .get(`/message/${chats[0]._id}`)
     .send({
       chatRoom: chats[0]._id,
     })
@@ -329,10 +323,7 @@ test('GET: chatRoom _id: undefined', async () => {
   token = `Bearer ${parsedResult2.token}`;
 
   const badChatRoomVar = await request(app)
-    .get('/message')
-    .send({
-      chatRoom: 'undefined',
-    })
+    .get(`/message/${undefined}`)
     .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(500);
@@ -418,10 +409,7 @@ test('PUT: missing message value', async () => {
   token = `Bearer ${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
-    .get('/message')
-    .send({
-      chatRoom: chats[0]._id,
-    })
+    .get(`/message/${chats[0]._id}`)
     .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
@@ -474,10 +462,7 @@ test('DELETE: malformed message _id', async () => {
   token = `Bearer ${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
-    .get('/message')
-    .send({
-      chatRoom: chats[0]._id,
-    })
+    .get(`/message/${chats[0]._id}`)
     .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(200);
@@ -518,7 +503,7 @@ test('NO Token', async () => {
 test('BAD Token', async () => {
   const token = "Bearer sldkfj2o8374lskdjf..skdfjlkxjcvolil98234.sldkfjowieur982734";
   const getListOfChatRooms = await request(app)
-    .get('/message')
+    .get(`/message/${chats[0]._id}`)
     .set('cookie', token)
     .expect('Content-Type', /json/)
     .expect(403);

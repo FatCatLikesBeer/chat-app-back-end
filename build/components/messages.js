@@ -35,5 +35,3 @@ export function populateMessages(messagesArray, userId) {
     messages_container.prepend(msgTier);
   });
 }
-
-

@@ -36,6 +36,7 @@ a {
   background-color: gainsboro;
   width: 240px;
   padding: 8px;
+  z-index: 1000;
 }
 
 .open {

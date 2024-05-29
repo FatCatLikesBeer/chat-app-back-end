@@ -1,6 +1,7 @@
 const chatRoom_container = document.getElementById('chatRooms_container');
 import { showNotification, setCookie } from '../script.js';
 import { populateMessages } from './messages.js';
+import { setMessageBar } from './messageBar.js';
 
 export function populateChats(chatRoomArray, userId) {
   try {
@@ -39,11 +40,12 @@ export function populateChats(chatRoomArray, userId) {
             .then(response => response.json())
             .then(data => {
               if (data.success) {
-                removeValues();
                 populateMessages(data.data, userId);
+                setMessageBar(element._id.toString());
                 setCookie(data.token);
               } else {
                 console.error(data.message);
+                showNotification(data.message);
                 throw new Error("Error fetching messages: /components/chatRoom.js", data.message);
               }
             })
@@ -51,7 +53,6 @@ export function populateChats(chatRoomArray, userId) {
               showNotification(err);
               console.error(err);
             });
-
 
           /* Appending The message_bar element should go SOMEWHERE AROUND HERE*/
           /* It will need the information from each chatroom */
