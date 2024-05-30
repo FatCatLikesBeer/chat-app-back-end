@@ -37,7 +37,7 @@ export function showApp(name) {
 
 // Set cookie function
 export function setCookie(token) {
-  document.cookie = "Barer " + token;
+  // document.cookie = "Barer " + token;
 }
 
 // Logout
@@ -49,10 +49,29 @@ export function logout() {
     "[placeholder_exit_message_index_3] 🤖",
   ]
   document.body.innerHTML = `<h3>${logoutMessages[Math.floor(Math.random() * logoutMessages.length)]}</h3>`;
-  setTimeout(() => {
-    location.reload();
-    setCookie('');
-  }, 500);
+  // Fetch /apiv1/logout to let server clear cookie
+  fetch('/apiv1/logout')
+    .then((response) => {
+      console.log(response);
+      if (!response.ok) {
+        throw new Error("Unable to logout");
+      } else {
+        return response.json();
+      }
+    })
+    .then((data) => {
+      if (data.success) {
+        setTimeout(() => {
+          location.reload();
+        }, 500);
+      } else {
+        document.body.innerHTML = '<h1>SOMETHING WENT TERRIBLY WRONG OOPS</h1>';
+      }
+    })
+    .catch((err) => {
+      showNotification(err);
+      console.error(err);
+    })
 }
 
 // Toggle Form between login & signup

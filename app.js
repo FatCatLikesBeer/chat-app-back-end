@@ -6,6 +6,7 @@ const passport = require('passport');
 const bcrypt = require("bcryptjs");
 const path = require('path');
 const WebSocket = require('ws');
+const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 const LocalStrategy = require("passport-local").Strategy;
@@ -18,6 +19,7 @@ const server = createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.use(logger('dev'));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'build')));

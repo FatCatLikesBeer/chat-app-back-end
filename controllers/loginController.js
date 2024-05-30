@@ -106,10 +106,10 @@ exports.login = [
                 })
               } else {
                 // Send data back to client
+                res.cookie("Barer", token);
                 res.json({
                   success: true,
                   message: 'Login Successful 😃',
-                  token: token,
                   chatRooms: chatRooms,
                   userData: {
                     userName: userName,

@@ -108,7 +108,7 @@ test('GET List of messages in a chatRoom', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -120,7 +120,7 @@ test('GET List of messages in a chatRoom', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
     .get(`/message/${chats[0]._id.toString()}`)
@@ -150,7 +150,7 @@ test('POST some messages into a chatroom', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -162,7 +162,7 @@ test('POST some messages into a chatroom', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const createMessage = await request(app)
     .post('/message')
@@ -196,7 +196,7 @@ test('PUT an edit to a message', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -208,7 +208,7 @@ test('PUT an edit to a message', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
     .get(`/message/${chats[0]._id}`)
@@ -216,7 +216,7 @@ test('PUT an edit to a message', async () => {
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer ${parsedResult3.token}`;
+  token = `Bearer=${parsedResult3.token}`;
   message = parsedResult3.data[0];
 
   const editMessage = await request(app)
@@ -253,7 +253,7 @@ test('DELETE a message', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -265,7 +265,7 @@ test('DELETE a message', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
     .get(`/message/${chats[0]._id}`)
@@ -276,7 +276,7 @@ test('DELETE a message', async () => {
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer ${parsedResult3.token}`;
+  token = `Bearer=${parsedResult3.token}`;
   message = parsedResult3.data[0];
 
   const deleteMessage = await request(app)
@@ -308,7 +308,7 @@ test('GET: chatRoom _id: undefined', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -320,7 +320,7 @@ test('GET: chatRoom _id: undefined', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const badChatRoomVar = await request(app)
     .get(`/message/${undefined}`)
@@ -349,7 +349,7 @@ test('POST: Bad chatRoom _id', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -361,7 +361,7 @@ test('POST: Bad chatRoom _id', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const createMessage = await request(app)
     .post('/message')
@@ -394,7 +394,7 @@ test('PUT: missing message value', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -406,7 +406,7 @@ test('PUT: missing message value', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
     .get(`/message/${chats[0]._id}`)
@@ -414,7 +414,7 @@ test('PUT: missing message value', async () => {
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer ${parsedResult3.token}`;
+  token = `Bearer=${parsedResult3.token}`;
   message = parsedResult3.data[0];
 
   const editMessage = await request(app)
@@ -447,7 +447,7 @@ test('DELETE: malformed message _id', async () => {
   const parsedResult1 = JSON.parse(firstLogin.text);
   expect(parsedResult1.success).toBeTruthy();
   expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+  token = `Bearer=${parsedResult1.token}`;
 
   const getListOfChatRooms = await request(app)
     .get('/chatRoom')
@@ -459,7 +459,7 @@ test('DELETE: malformed message _id', async () => {
   expect(parsedResult2.success).toBeTruthy();
   expect(parsedResult2.token).not.toBeUndefined();
   expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer ${parsedResult2.token}`;
+  token = `Bearer=${parsedResult2.token}`;
 
   const getLastFiftyMessages = await request(app)
     .get(`/message/${chats[0]._id}`)
@@ -467,7 +467,7 @@ test('DELETE: malformed message _id', async () => {
     .expect('Content-Type', /json/)
     .expect(200);
   const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer ${parsedResult3.token}`;
+  token = `Bearer=${parsedResult3.token}`;
   message = parsedResult3.data[0];
   message._id = 'woeirulskdjflskd';
 
@@ -501,7 +501,7 @@ test('NO Token', async () => {
 });
 
 test('BAD Token', async () => {
-  const token = "Bearer sldkfj2o8374lskdjf..skdfjlkxjcvolil98234.sldkfjowieur982734";
+  const token = "Bearer=sldkfj2o8374lskdjf..skdfjlkxjcvolil98234.sldkfjowieur982734";
   const getListOfChatRooms = await request(app)
     .get(`/message/${chats[0]._id}`)
     .set('cookie', token)

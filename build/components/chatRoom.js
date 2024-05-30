@@ -3,6 +3,8 @@ import { showNotification, setCookie } from '../script.js';
 import { populateMessages } from './messages.js';
 import { setMessageBar } from './messageBar.js';
 
+let selectedChat;
+
 export function populateChats(chatRoomArray, userId) {
   try {
     if (chatRoomArray.length > 0) {
@@ -29,37 +31,32 @@ export function populateChats(chatRoomArray, userId) {
         chatRoom_container.appendChild(chatRoom_element);
 
         // Click Action
-        chatRoom_element.addEventListener('click', () => {
-
-          /* Call API for messages */
-          fetch(`/apiv1/message/${element._id.toString()}`, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                populateMessages(data.data, userId);
-                setMessageBar(element._id.toString());
-                setCookie(data.token);
-              } else {
-                console.error(data.message);
-                showNotification(data.message);
-                throw new Error("Error fetching messages: /components/chatRoom.js", data.message);
-              }
+        chatRoom_element.addEventListener('click', (event) => {
+          if (selectedChat != element._id.toString()) {
+            /* Call API for messages */
+            fetch(`/apiv1/message/${element._id.toString()}`, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
             })
-            .catch(err => {
-              showNotification(err);
-              console.error(err);
-            });
-
-          /* Appending The message_bar element should go SOMEWHERE AROUND HERE*/
-          /* It will need the information from each chatroom */
-          /* The message bar send button & event listener will need the chatRoom._id */
-          /* The message bar & button should have their element id be the chatRoom._id.toString() */
-          /* You will need to add the send button event listener here */
-          /* Don't forget to remove previous event listeners */
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  populateMessages(data.data, userId);
+                  setMessageBar(element._id.toString());
+                  setCookie(data.token);
+                  selectedChat = element._id.toString();
+                } else {
+                  console.error(data.message);
+                  showNotification(data.message);
+                  throw new Error("Error fetching messages: /components/chatRoom.js", data.message);
+                }
+              })
+              .catch(err => {
+                showNotification(err);
+                console.error(err);
+              });
+          }
         });
       });
     } else {

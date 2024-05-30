@@ -18,6 +18,7 @@ const bcrypt = require('bcryptjs');
   // Create User
   let billy;
   let silly;
+  let milly;
   bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
     billy = new UserModel({
       userName: 'billy',
@@ -25,6 +26,14 @@ const bcrypt = require('bcryptjs');
       password: hashedPassword,
     });
     await billy.save();
+  });
+  bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
+    milly = new UserModel({
+      userName: 'milly',
+      email: 'milly@gmail.com',
+      password: hashedPassword,
+    });
+    await milly.save();
   });
   bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
     silly = new UserModel({
@@ -43,6 +52,16 @@ const bcrypt = require('bcryptjs');
     });
     await newChatroom.save();
 
+    const newChatroom1 = new ChatRoomModel({
+      owner: billy._id.toString(),
+      participants: [
+        { _id: billy._id.toString(), userName: billy.userName },
+        { _id: milly._id.toString(), userName: milly.userName },
+        { _id: silly._id.toString(), userName: silly.userName }
+      ],
+    });
+    await newChatroom1.save();
+
     const newMessage = new MessageModel({
       author: { _id: billy._id.toString(), userName: billy.userName },
       chatRoom: newChatroom._id.toString(),
@@ -56,5 +75,11 @@ const bcrypt = require('bcryptjs');
       message: "Silly here, this is the second message!"
     });
     await secondMessage.save();
+    const thirdMessage = new MessageModel({
+      author: { _id: milly._id.toString(), userName: milly.userName },
+      chatRoom: newChatroom1._id.toString(),
+      message: "MILLY"
+    });
+    await thirdMessage.save();
   });
 })();

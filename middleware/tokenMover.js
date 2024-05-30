@@ -1,24 +1,25 @@
 // Token Verification Function
 function verifyToken(req, res, next) {
   // Get auth header value
-  const barerHeader = req.headers['cookie'];
+  console.log(req.cookies);
+  if (req.cookies != undefined) {
+    const barerHeader = req.cookies['Barer'];
 
-  // Check if barerHeader is undefined
-  if (typeof barerHeader !== 'undefined') {
-    // Split at the space
-    const barer = barerHeader.split(' ');
-
-    // Get token from array
-    const barerToken = barer[1];
-
-    // Set the token
-    req.token = barerToken;
-    next();
+    // Check if barerHeader is undefined
+    if (typeof barerHeader !== 'undefined') {
+      req.token = barerHeader;
+      next();
+    } else {
+      // Unauthorized
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized: tokenMover1",
+      });
+    }
   } else {
-    // Forbidden
-    res.status(403).json({
+    res.status(401).json({
       success: false,
-      message: "Forbidden",
+      message: "Unauthorized: tokenMover2"
     });
   }
 };

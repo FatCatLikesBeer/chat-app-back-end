@@ -41,12 +41,12 @@ beforeAll(async () => {
   await differentOnwer.save();
   const chatRoom1 = new ChatRoomModel({
     owner: newUser._id,
-    participants: [newUser._id],
+    participants: [{ _id: newUser._id, userName: newUser.userName }],
   })
   await chatRoom1.save();
   const chatRoom2 = new ChatRoomModel({
     owner: differentOnwer._id,
-    participants: [newUser._id],
+    participants: [{ _id: newUser._id, userName: newUser.userName }],
   })
   await chatRoom2.save();
 });
@@ -71,9 +71,11 @@ test('Regular Login', async () => {
     .expect(200);
 
   const parsedResult = JSON.parse(res.text);
+  expect(res.headers['set-cookie']).not.toBeUndefined();
+  const token = res.headers['set-cookie'][0].split('=')[1].split(';')[0];
+  expect(token).not.toBeUndefined();
   expect(parsedResult.success).toBeTruthy();
-  expect(parsedResult.token).not.toBeUndefined();
-  expect(parsedResult.data.chatRooms).not.toBeUndefined();
+  expect(parsedResult.chatRooms).not.toBeUndefined();
 });
 
 test('Username Too Short', async () => {

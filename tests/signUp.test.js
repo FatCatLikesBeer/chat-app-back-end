@@ -54,7 +54,9 @@ test('Good Signup', async () => {
     .expect(200);
 
   const parsedResult = JSON.parse(res.text);
-  expect(parsedResult.token).not.toBeUndefined();
+  expect(res.headers['set-cookie']).not.toBeUndefined();
+  const token = res.headers['set-cookie'][0].split('=')[1].split(';')[0];
+  expect(token).not.toBeUndefined();
   expect(parsedResult.success).toBeTruthy();
 });
 

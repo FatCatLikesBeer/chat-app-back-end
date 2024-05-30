@@ -1,6 +1,7 @@
 const messagesContainer = document.getElementById('messages_container');
 
 export function populateMessages(messagesArray, userId) {
+  // Clear out messages_container
   messagesContainer.innerHTML = "";
   messagesArray.forEach((msg) => {
     // Create Elements

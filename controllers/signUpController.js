@@ -101,10 +101,10 @@ exports.signUp = [
               })
             } else {
               // Send data back to client
+              res.cookie('Barer', token);
               res.json({
                 success: true,
                 message: "Signup Successful 😃",
-                token: token,
                 userData: {
                   userName: payload.userName,
                   email: payload.email,

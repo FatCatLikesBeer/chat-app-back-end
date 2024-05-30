@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const sendPayload = asyncHandler(async (req, res, next) => {
@@ -21,13 +22,16 @@ const sendPayload = asyncHandler(async (req, res, next) => {
         message: 'Error generating authentication data',
       });
     } else {
+      res.cookie('Barer', token, {
+        httpOnly: true,
+        sameSite: 'Strict'
+      });
       response.userData = {
         _id: req.tokenData._id.toString(),
         userName: req.tokenData.userName,
-        email: req.token.email,
+        email: req.tokenData.email,
       }
       response.userName = req.tokenData.userName;
-      response.token = token;
       if (errorFlag != 'undefined') {
         response.success = false;
         res.status(errorFlag).json(response);

@@ -43,6 +43,7 @@
       <li><a href="#login"><code>/login</code></a></li>
       <li><a href="#chatRoom"><code>/chatRoom</code></a></li>
       <li><a href="#message"><code>/message</code></a></li>
+      <li><a href="#logout"><code>/logout</code></a></li>
     </menu>
     <div class="section">
       <h3 id="signup"><pre>/signup</pre></h3>
@@ -61,7 +62,6 @@
       {
         success: true,
         message: String,
-        token: String,
         userData: {
           userName: String,
           email: String,
@@ -93,7 +93,6 @@
       {
         success: true,
         message: String,
-        token: String,
         data: {
           userData: {
             userName: String,
@@ -119,16 +118,12 @@
       <h5 class="request">Expected Request</h5>
       <pre class="code">
       route: /chatRoom
-      {
-        token: String
-      }
       </pre>
       <h5 class="success">Expected Success Response</h5>
       <pre class="code">
       {
         success: true,
         message: String,
-        token: String,
         data: Array
       }
       </pre>
@@ -145,17 +140,12 @@
       <h5 class="request">Expected Request</h5>
       <pre class="code">
       route: /chatRoom/:_id
-      {
-        chatRoom: String,
-        token: String
-      }
       </pre>
       <h5 class="success">Expected Success Response</h5>
       <pre class="code">
       {
         success: true,
         message: String,
-        token: String,
         data: Object
       }
       </pre>
@@ -181,7 +171,6 @@
       {
         success: true,
         message: String,
-        token: String,
         data: Array
       }
       </pre>
@@ -216,7 +205,6 @@
       {
         success: true,
         message: String,
-        token: String,
         data: Array
       }
       </pre>
@@ -235,7 +223,6 @@
       route: /chatRoom
       {
         chatRoom: chatRoom._id,
-        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -243,7 +230,6 @@
       {
         success: true,
         message: String,
-        token: String,
         data: Array
       }
       </pre>
@@ -262,16 +248,12 @@
       <h5 class="request">Expected Request</h5>
       <pre class="code">
       route: /message
-      {
-        token: String
-      }
       </pre>
       <h5 class="success">Expected Success Response</h5>
       <pre class="code">
       {
         success: true,
         message: String,
-        token: String,
         data: Array
       }
       </pre>
@@ -286,16 +268,12 @@
       <h5 class="request">Expected Request</h5>
       <pre class="code">
       route: /message/:_id
-      {
-        token: String
-      }
       </pre>
       <h5 class="success">Expected Success Response</h5>
       <pre class="code">
       {
         success: true,
         message: String,
-        token: String,
         data: Object
       }
       </pre>
@@ -313,7 +291,6 @@
       {
         chatRoom: chatRoom._id,
         message: String,
-        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -321,7 +298,6 @@
       {
         success: true,
         message: String,
-        token: String,
         data: Object
       }
       </pre>
@@ -339,7 +315,6 @@
       {
         chatRoom: chatRoom._id,
         message: String,
-        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -347,7 +322,6 @@
       {
         success: true,
         message: String,
-        token: String,
         data: Object
       }
       </pre>
@@ -364,7 +338,6 @@
       route: /message
       {
         message: message._id,
-        token: String
       }
       </pre>
       <h5 class="success">Expected Success Response</h5>
@@ -372,7 +345,6 @@
       {
         success: true,
         message: String,
-        token: String,
         data: Object
       }
       </pre>
@@ -381,6 +353,21 @@
       {
         success: false,
         message: String
+      }
+      </pre>
+    </div>
+    <div class="section">
+      <h3 id="logout"><pre>/logout</pre></h3>
+      <h5 class="subsection">GET</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /logout
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: "Logging Out"
       }
       </pre>
     </div>
