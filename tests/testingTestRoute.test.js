@@ -2,6 +2,7 @@ const request = require('supertest');
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const loginRouter = require('../routes/loginRouter.js');
@@ -12,6 +13,7 @@ const UserModel = require('../models/users');
 const ChatRoomModel = require('../models/chatrooms');
 
 const app = express();
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/', apiRouter);
@@ -61,31 +63,31 @@ afterAll(async () => {
 });
 
 /* Testing out middlware refactoring */
-test('Testing out middleware refactoring', async () => {
-  let token;
-  const res1 = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('Testing out middleware refactoring', () => {
+  const agent = request.agent(app);
+  it('Login & get cookie?', async () => {
+    const res1 = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(res1.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer ${parsedResult1.token}`;
+    const parsedResult1 = JSON.parse(res1.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const res2 = await request(app)
-    .get('/test')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+  it("GET /test route (I'm not sure what this route does)", async () => {
+    const res2 = await agent
+      .get('/test')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const parsedResult2 = JSON.parse(res2.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
+    const parsedResult2 = JSON.parse(res2.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 });
 
