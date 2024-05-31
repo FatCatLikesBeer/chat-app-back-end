@@ -29,6 +29,7 @@ beforeAll(async () => {
   const mongoUri = await mongoServer.getUri();
   mongoose.connect(mongoUri);
 
+  // Create Users
   const owner = new UserModel({
     userName: 'ValidUser',
     email: 'fake@email.com',
@@ -48,6 +49,7 @@ beforeAll(async () => {
   });
   await participant2.save();
 
+  // Create ChatRooms
   const newChatRoom1 = new ChatRoomModel({
     owner: owner._id.toString(),
     participants: {
@@ -65,6 +67,7 @@ beforeAll(async () => {
   });
   await newChatRoom2.save();
 
+  // Consolidate User & Chatrooms
   participants.push(...[
     {
       _id: participant1._id,
@@ -80,340 +83,286 @@ beforeAll(async () => {
 
 /* DO ALL THIS AFTER RUNNING TESTS */
 afterAll(async () => {
+  // Clean up stuff
   mongoose.disconnect();
   mongoServer.stop();
 });
 
 //// ---- GET REQUESTS ---- ////
-
-/* GET chatRooms for a user */
-// test('GET list of chatRooms', async () => {
-//   const res1 = await request(app)
-//     .post('/login')
-//     .send({
-//       userName: 'ValidUser',
-//       password: 'fakePassword',
-//     })
-//     .expect("Content-Type", /json/)
-//     .expect(200);
-//
-//   const parsedResult1 = JSON.parse(res1.text);
-//   expect(parsedResult1.success).toBeTruthy();
-//   expect(res1.headers['set-cookie']).not.toBeUndefined();
-//   const token = res1.headers['set-cookie'][0].split('=')[1].split(';')[0];
-//   expect(token).not.toBeUndefined();
-//
-//   const tokenData = res1.headers['set-cookie'][0].split(';')[0];
-//
-//   const res2 = await request(app)
-//     .get('/chatRoom')
-//     .set("cookie", [...res1.headers['set-cookie']])
-//     .expect('Content-Type', /json/)
-//     .expect(200);
-//
-//   console.log(res2.text);
-//
-//   const parsedResult2 = JSON.parse(res2.text);
-//   expect(parsedResult2.success).toBeTruthy();
-//   expect(res2.headers['set-cookie']).not.toBeUndefined();
-//   const token1 = res2.headers['set-cookie'][0].split('=')[1].split(';')[0];
-//   expect(token1).not.toBeUndefined();
-//   expect(parsedResult2.data).not.toBeUndefined();
-//   expect(parsedResult2.data.length).toBe(2);
-// });
-
-////// ---- POST REQUESTS ---- ////
-//
-///* POST a new chatRoom from a user */
-//test('POST a new chatRoom', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'ValidUser',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).not.toBeUndefined();
-//  token = `Bearer=${parsedResult1.token}`;
-//
-//  const res2 = await request(app)
-//    .post('/chatRoom')
-//    .set('cookie', token)
-//    .expect('Content-Type', /json/)
-//    .expect(200);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeTruthy();
-//  expect(parsedResult2.token).not.toBeUndefined();
-//  expect(parsedResult2.data).not.toBeUndefined();
-//  expect(parsedResult2.data.length).toBe(3);
-//});
-//
-////// ---- PUT REQUESTS ---- ////
-//
-///* PUT new participants in chatRoom[0] */
-//test('PUT new participants in a chatRoom[0]', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'ValidUser',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).not.toBeUndefined();
-//  token = `Bearer=${parsedResult1.token}`;
-//
-//  const res2 = await request(app)
-//    .put('/chatRoom')
-//    .set('cookie', token)
-//    .send({
-//      chatRoom: chats[0],
-//      add: [participants[0], participants[1]],
-//      remove: undefined,
-//      chown: undefined,
-//    })
-//    .expect('Content-Type', /json/)
-//    .expect(200);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeTruthy();
-//  expect(parsedResult2.token).not.toBeUndefined();
-//  expect(parsedResult2.data).not.toBeUndefined();
-//  expect(parsedResult2.data.length).toBe(3);
-//});
-//
-///* PUT new participants in chatRoom[1] */
-//test('PUT new participants in chatRoom[1]', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'ValidUser',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).not.toBeUndefined();
-//  token = `Bearer=${parsedResult1.token}`;
-//
-//  const res2 = await request(app)
-//    .put('/chatRoom')
-//    .set('cookie', token)
-//    .send({
-//      chatRoom: chats[1],
-//      add: [participants[0], participants[1]],
-//    })
-//    .expect('Content-Type', /json/)
-//    .expect(200);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeTruthy();
-//  expect(parsedResult2.token).not.toBeUndefined();
-//  expect(parsedResult2.data).not.toBeUndefined();
-//  expect(parsedResult2.data.length).toBe(3);
-//});
-//
-///* PUT Changes to chatRoom[1], remove participant & change onwer */
-//test('PUT Changes to chatRoom[1]: remove participant & change onwer', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'ValidUser',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).not.toBeUndefined();
-//  token = `Bearer=${parsedResult1.token}`;
-//
-//  const res2 = await request(app)
-//    .put('/chatRoom')
-//    .set('cookie', token)
-//    .send({
-//      chatRoom: chats[1],
-//      chown: participants[1],
-//      remove: [participants[0]],
-//    })
-//    .expect('Content-Type', /json/)
-//    .expect(200);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeTruthy();
-//  expect(parsedResult2.token).not.toBeUndefined();
-//  expect(parsedResult2.data).not.toBeUndefined();
-//  expect(parsedResult2.data.length).toBe(2);
-//});
-//
-///* GET chatRooms for new owner of chatRoom[1] */
-//test('GET chatRooms for new owner of chatRoom[1]', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'Participant2',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).not.toBeUndefined();
-//  token = `Bearer=${parsedResult1.token}`;
-//
-//  const res2 = await request(app)
-//    .get('/chatRoom')
-//    .set('cookie', token)
-//    .expect('Content-Type', /json/)
-//    .expect(200);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeTruthy();
-//  expect(parsedResult2.token).not.toBeUndefined();
-//  expect(parsedResult2.data).not.toBeUndefined();
-//  expect(parsedResult2.data.length).toBe(2);
-//  expect(parsedResult2.data[0].participants.length).toBe(3);
-//});
-//
-///* PUT No Token remove participant */
-//test('PUT: NO TOKEN remove participant', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'ValidUser',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).toBeDefined();
-//
-//  const res2 = await request(app)
-//    .get('/chatRoom')
-//    .expect('Content-Type', /json/)
-//    .expect(403);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeFalsy();
-//  expect(parsedResult2.message).toBe("Forbidden");
-//});
-//
-///* PUT Bad Token Change Owner */
-//test('PUT: BAD TOKEN new chatRoom owner', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'ValidUser',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).not.toBeUndefined();
-//  token = `Bearer=badTokEn.${parsedResult1.token}`;
-//
-//  const res2 = await request(app)
-//    .get('/chatRoom')
-//    .set('cookie', token)
-//    .expect('Content-Type', /json/)
-//    .expect(403);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeFalsy();
-//  expect(parsedResult2.message).toBe("Forbidden");
-//});
-//
-////// ---- DELETE REQUESTS ---- ////
-//
-///* DELETE a chatRoom */
-//test('DELETE a chatRoom', async () => {
-//  let token;
-//  const res1 = await request(app)
-//    .post('/login')
-//    .send({
-//      userName: 'ValidUser',
-//      password: 'fakePassword',
-//    })
-//    .expect("Content-Type", /json/)
-//    .expect(200);
-//
-//  const parsedResult1 = JSON.parse(res1.text);
-//  expect(parsedResult1.success).toBeTruthy();
-//  expect(parsedResult1.token).toBeDefined();
-//  token = `Bearer=${parsedResult1.token}`;
-//
-//  const getChats = await request(app)
-//    .get('/chatRoom')
-//    .set('cookie', token)
-//    .expect(200)
-//
-//  const getChatsParsed = JSON.parse(getChats.text);
-//  const chatRooms = getChatsParsed.data;
-//  token = `Bearer=${getChatsParsed.token}`;
-//
-//  const res2 = await request(app)
-//    .delete('/chatRoom')
-//    .set('cookie', token)
-//    .send({
-//      chatRoom: chatRooms[0],
-//    })
-//    .expect('Content-Type', /json/)
-//    .expect(200);
-//
-//  const parsedResult2 = JSON.parse(res2.text);
-//  expect(parsedResult2.success).toBeTruthy();
-//  expect(parsedResult2.message).toBe("chatRoom successfully deleted");
-//});
-
-describe("Cookie handling", () => {
+/* GET chatRooms for a ValidUser */
+describe("Get list of chatRooms(s)", () => {
   const agent = request.agent(app);
-  const accessInfo = CookieAccessInfo();
   let cookie;
-  it("It should login & set cookie", async () => {
+  it("Successfully log in & recieve a cookie with name: 'Barer'", async () => {
     const loginResponse = await agent
       .post('/login')
       .send({
-        'userName': 'ValidUser',
-        'password': 'fakePassword',
+        userName: 'ValidUser',
+        password: 'fakePassword',
       })
-      .expect('Content-Type', /json/)
+      .expect("Content-Type", /json/)
       .expect(200);
 
     cookie = loginResponse.get('set-cookie')[0];
-
     expect(cookie).toBeDefined();
-    expect(cookie.split('=')[0]).toMatch("Barer");
+    expect(cookie.split("=")[0]).toMatch('Barer');
   });
 
-  it("It should successfully use cookie at /chatRoom", async () => {
+  it("Successfully use cookie to get array of chatRooms", async () => {
     const chatRoomResponse = await agent
       .get('/chatRoom')
       .expect('Content-Type', /json/)
       .expect(200)
 
     expect(chatRoomResponse.status).toBeTruthy();
+  });
+});
+
+//// ---- POST REQUESTS ---- ////
+/* POST a new chatRoom from a user */
+describe("Post a new chatroom from a user", () => {
+  const agent = request.agent(app);
+  let cookie;
+  it("Successfully log in & recieve a cookie with name: 'Barer'", async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
+  });
+
+  it("Create a third, new chatRoom with the aid of cookie data", async () => {
+    const postChatRoom = await agent
+      .post('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    const postChatRoomResult = JSON.parse(postChatRoom.text);
+    expect(postChatRoomResult.success).toBeTruthy();
+    expect(postChatRoomResult.data).not.toBeUndefined();
+    expect(postChatRoomResult.data.length).toBe(3);
+  });
+});
+
+//// ---- PUT REQUESTS ---- ////
+describe("PUT new participants in chatRoom[0]", () => {
+  let cookie;
+  const agent = request.agent(app);
+  it("Login & get cookie", async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
+  });
+  it("Make changes to chatRoom", async () => {
+    const putResponse = await agent
+      .put('/chatRoom')
+      .send({
+        chatRoom: chats[0],
+        add: [participants[0], participants[1]],
+        remove: undefined,
+        chown: undefined,
+      })
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    const parsedPutResponse = JSON.parse(putResponse.text);
+    expect(parsedPutResponse.success).toBeTruthy();
+    expect(parsedPutResponse.data).toBeDefined();
+    expect(parsedPutResponse.data.length).toBe(3);
+  });
+});
+
+describe('PUT new participans in chatRoom[1]', () => {
+  let cookie;
+  const agent = request.agent(app);
+  it("Login & get cookie", async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
+  });
+  it('PUT new participants to chatRoom[1]', async () => {
+    const putResponse = await agent
+      .put('/chatRoom')
+      .send({
+        chatRoom: chats[1],
+        add: [participants[0], participants[1]],
+      })
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    const parsedResult2 = JSON.parse(putResponse.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+    expect(parsedResult2.data.length).toBe(3);
+  });
+});
+
+/* PUT Changes to chatRoom[1], remove participant & change onwer */
+describe('PUT Changes to chatRoom[1]: remove participant & change onwer', () => {
+  let cookie;
+  const agent = request.agent(app);
+  it('Login Successfully & get cookie', async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
+  });
+
+  it('PUT changes: Remove participant & change onwer', async () => {
+    const putResponse = await agent
+      .put('/chatRoom')
+      .send({
+        chatRoom: chats[1],
+        chown: participants[1],
+        remove: [participants[0]],
+      })
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    const parsedResult = JSON.parse(putResponse.text);
+    expect(parsedResult.success).toBeTruthy();
+    expect(parsedResult.data).toBeDefined();
+    expect(parsedResult.data.length).toBe(2);
+  });
+});
+
+describe('GET chatRooms for new owner of chatRoom[1]', () => {
+  let cookie;
+  const agent = request.agent(app);
+  it('Login Successfully & get cookie', async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'Participant2',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
+  });
+
+  it('GET chatRooms for new owner of chatRoom[1]', async () => {
+    const getResponse = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    const parsedResult = JSON.parse(getResponse.text);
+    expect(parsedResult.success).toBeTruthy();
+    expect(parsedResult.data).not.toBeUndefined();
+    expect(parsedResult.data.length).toBe(2);
+    expect(parsedResult.data[0].participants.length).toBe(3);
+  });
+});
+
+/* PUT No Token remove participant */
+describe('PUT: No TOKEN remove participant', () => {
+  const agent = request.agent(app);
+  let cookie
+  const accessInfo = {
+    domain: '127.0.0.1',
+    path: '/'
+  };
+  it('Login Successfully & get cookie', async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'Participant2',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
+
+    // The following method must happen inside the function
+    // It looks better after the it() function, but it
+    // oddly get hoisted...
+    agent.jar.setCookie('Barer=badData', '127.0.0.1'); //setCookie() two values
+  });
+
+  it("Manipulate cookie: remove token, return '401: Unauthorized'", async () => {
+    const badToken = await agent
+      .put('/chatRoom')
+      .send({
+        remove: [participants[0]],
+      })
+      .expect('Content-Type', /json/)
+      .expect(401)
+
+    const parsedBadToken = JSON.parse(badToken.text);
+    expect(parsedBadToken.status).toBeFalsy();
+    expect(parsedBadToken.message).toMatch('Unauthorized');
+  });
+});
+
+//// ---- DELETE REQUESTS ---- ////
+/* DELETE a chatRoom */
+describe("DELETE a chatRoom", () => {
+  const agent = request.agent(app);
+  let cookie
+  it('Login Successfully & get cookie', async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'Participant2',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
+
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
+  });
+
+  it('DELETE request to delete a chatRoom', async () => {
+    const deleteResponse = await agent
+      .delete('/chatRoom')
+      .send({ chatRoom: chats[0] })
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    const parsedDelete = JSON.parse(deleteResponse.text);
+    expect(parsedDelete.success).toBeTruthy();
+    expect(parsedDelete.message).toMatch('chatRoom successfully deleted');
   });
 });

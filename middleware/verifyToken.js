@@ -4,9 +4,9 @@ require('dotenv').config();
 const verifyToken = (req, res, next) => {
   jwt.verify(req.token, process.env.JWT_SECRET, async (error, tokenData) => {
     if (error) {
-      res.status(403).json({
+      res.status(401).json({
         success: false,
-        message: "Forbidden",
+        message: "Unauthorized: verifyToken1",
       })
     } else {
       req.tokenData = {

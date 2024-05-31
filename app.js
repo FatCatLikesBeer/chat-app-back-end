@@ -94,7 +94,7 @@ app.use((err, req, res, next) => {
   console.log(err);
   res.status(500).json({
     success: false,
-    message: "SOMETHING WENT TERRIBLY WRONG 😫",
+    message: err || "SOMETHING WENT TERRIBLY WRONG 😫",
   });
 });
 
