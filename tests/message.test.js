@@ -1,6 +1,7 @@
 const request = require('supertest');
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const apiRouter = require('../routes/api');
@@ -10,6 +11,7 @@ const ChatRoomModel = require('../models/chatrooms');
 const MessageModel = require('../models/messages');
 
 const app = express();
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/', apiRouter);
@@ -94,423 +96,441 @@ afterAll(async () => {
 });
 
 //// ---- GET REQUESTS ---- ////
-test('GET List of messages in a chatRoom', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('GET List of messages in a chatRoom', () => {
+  const agent = request.agent(app);
+  let cookie;
+  it('Login & get cookie', async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+    const parsedResult1 = JSON.parse(loginResponse.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+  it('GET list of chatRoom', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const getLastFiftyMessages = await request(app)
-    .get(`/message/${chats[0]._id.toString()}`)
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  expect(parsedResult3.success).toBeTruthy();
-  expect(parsedResult3.token).not.toBeUndefined();
-  expect(parsedResult3.data).not.toBeUndefined();
-  expect(parsedResult3.data.length).toBe(3);
+  it('GET messages from a chatRoom', async () => {
+    const getLastFiftyMessages = await agent
+      .get(`/message/${chats[0]._id.toString()}`)
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+    expect(parsedResult3.success).toBeTruthy();
+    expect(parsedResult3.data).not.toBeUndefined();
+    expect(parsedResult3.data.length).toBe(3);
+  });
 });
 
 //// ---- POST REQUESTS ---- ////
-test('POST some messages into a chatroom', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('POST some messages into a chatroom', () => {
+  const agent = request.agent(app);
+  let cookie;
+  it('Login & get cookie', async () => {
+    const loginResponse = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    cookie = loginResponse.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+    const parsedResult1 = JSON.parse(loginResponse.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+  it('GET list of chatRooms', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const createMessage = await request(app)
-    .post('/message')
-    .send({
-      chatRoom: chats[0]._id,
-      message: "This post was made OUTSIDE the test and inside the controller 😃"
-    })
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const parsedResult3 = JSON.parse(createMessage.text);
-  expect(parsedResult3.success).toBeTruthy();
-  expect(parsedResult3.token).not.toBeUndefined();
-  expect(parsedResult3.data).not.toBeUndefined();
-  expect(parsedResult3.data.length).toBe(4);
+  it('POST message to chats[0]', async () => {
+    const createMessage = await agent
+      .post('/message')
+      .send({
+        chatRoom: chats[0]._id,
+        message: "This post was made OUTSIDE the test and inside the controller 😃"
+      })
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    const parsedResult3 = JSON.parse(createMessage.text);
+    expect(parsedResult3.success).toBeTruthy();
+    expect(parsedResult3.data).not.toBeUndefined();
+    expect(parsedResult3.data.length).toBe(4);
+  });
 });
 
 //// ---- PUT REQUESTS ---- ////
-test('PUT an edit to a message', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('PUT an edit to a message', () => {
+  const agent = request.agent(app);
+  let cookie;
+  it('Login & get cookie', async () => {
+    const firstLogin = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    cookie = firstLogin.get('set-cookie')[0];
+    expect(cookie).toBeDefined();
+    expect(cookie.split("=")[0]).toMatch('Barer');
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+    const parsedResult1 = JSON.parse(firstLogin.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+  it('GET list of chatRooms', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const getLastFiftyMessages = await request(app)
-    .get(`/message/${chats[0]._id}`)
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
-  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer=${parsedResult3.token}`;
-  message = parsedResult3.data[0];
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const editMessage = await request(app)
-    .put('/message')
-    .send({
-      edit: "This post was made technically SAVED outside the test and inside the controller 😉",
-      chatRoom: message.chatRoom,
-      message: message,
-    })
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+  it('GET list of messages for a chatRoom', async () => {
+    const getLastFiftyMessages = await agent
+      .get(`/message/${chats[0]._id}`)
+      .expect('Content-Type', /json/)
+      .expect(200);
+    const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+    message = parsedResult3.data[0];
+  });
 
-  const parsedResult4 = JSON.parse(editMessage.text);
-  expect(parsedResult4.success).toBeTruthy();
-  expect(parsedResult4.token).not.toBeUndefined();
-  expect(parsedResult4.data).not.toBeUndefined();
-  expect(parsedResult4.data.length).toBe(4);
-  expect(parsedResult4.data[0].message).toBe('This post was made technically SAVED outside the test and inside the controller 😉');
+  it('PUT changes to a message', async () => {
+    const editMessage = await agent
+      .put('/message')
+      .send({
+        edit: "This post was made technically SAVED outside the test and inside the controller 😉",
+        chatRoom: message.chatRoom,
+        message: message,
+      })
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    const parsedResult4 = JSON.parse(editMessage.text);
+    expect(parsedResult4.success).toBeTruthy();
+    expect(parsedResult4.data).not.toBeUndefined();
+    expect(parsedResult4.data.length).toBe(4);
+    expect(parsedResult4.data[0].message).toBe('This post was made technically SAVED outside the test and inside the controller 😉');
+  });
 });
 
 //// ---- DELETE REQUESTS ---- ////
-test('DELETE a message', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('DELETE a message', () => {
+  const agent = request.agent(app);
+  let cookie;
+  it('Login & get cookie', async () => {
+    const firstLogin = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    const parsedResult1 = JSON.parse(firstLogin.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+  it('GET list of chatRooms', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const getLastFiftyMessages = await request(app)
-    .get(`/message/${chats[0]._id}`)
-    .send({
-      chatRoom: chats[0]._id,
-    })
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
-  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer=${parsedResult3.token}`;
-  message = parsedResult3.data[0];
+  it('GET messages from a chatRoom', async () => {
+    const getLastFiftyMessages = await agent
+      .get(`/message/${chats[0]._id}`)
+      .send({
+        chatRoom: chats[0]._id,
+      })
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const deleteMessage = await request(app)
-    .delete('/message')
-    .send({
-      message: message,
-    })
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+    const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+    message = parsedResult3.data[0];
+  });
 
-  const parsedResult4 = JSON.parse(deleteMessage.text);
-  expect(parsedResult4.success).toBeTruthy();
-  expect(parsedResult4.message).toBe("Message successfully deleted");
+  it('DELETE a message', async () => {
+    const deleteMessage = await agent
+      .delete('/message')
+      .send({
+        message: message,
+      })
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    const parsedResult4 = JSON.parse(deleteMessage.text);
+    expect(parsedResult4.success).toBeTruthy();
+    expect(parsedResult4.message).toBe("Message successfully deleted");
+  });
 });
 
 //// ---- GET REQUEST: Bad chatRoom var ---- ////
-test('GET: chatRoom _id: undefined', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('GET: chatRoom _id: undefined', () => {
+  const agent = request.agent(app);
+  let cookie;
+  it('Login & get cookie', async () => {
+    const firstLogin = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    const parsedResult1 = JSON.parse(firstLogin.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+  it('GET list of chatRooms', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const badChatRoomVar = await request(app)
-    .get(`/message/${undefined}`)
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(500);
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const parsedResult3 = JSON.parse(badChatRoomVar.text);
-  expect(parsedResult3.success).toBeFalsy();
-  expect(parsedResult3.token).not.toBeUndefined();
-  expect(parsedResult3.message).not.toBeUndefined();
+  it('GET bad message request, undefined /:_id parameter', async () => {
+    const badChatRoomVar = await agent
+      .get(`/message/${undefined}`)
+      .expect('Content-Type', /json/)
+      .expect(500);
+
+    const parsedResult3 = JSON.parse(badChatRoomVar.text);
+    expect(parsedResult3.success).toBeFalsy();
+    expect(parsedResult3.message).not.toBeUndefined();
+  });
 });
 
 //// ---- POST REQUESTS: Bad chatRoom var ---- ////
-test('POST: Bad chatRoom _id', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('POST: Bad chatRoom _id', () => {
+  const agent = request.agent(app);
+  let cookie;
+  it('Login & get cookie', async () => {
+    const firstLogin = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    const parsedResult1 = JSON.parse(firstLogin.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+  it('GET list of chatRooms', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const createMessage = await request(app)
-    .post('/message')
-    .send({
-      chatRoom: `${chats[0]._id}lskjdfoieur`,
-      message: "This post was made OUTSIDE the test and inside the controller 😃"
-    })
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(500);
+  it('POST message, malformed chatRoom._id', async () => {
+    const createMessage = await agent
+      .post('/message')
+      .send({
+        chatRoom: `${chats[0]._id}lskjdfoieur`,
+        message: "This post was made OUTSIDE the test and inside the controller 😃"
+      })
 
-  const parsedResult3 = JSON.parse(createMessage.text);
-  expect(parsedResult3.success).toBeFalsy();
-  expect(parsedResult3.token).not.toBeUndefined();
-  expect(parsedResult3.message).not.toBeUndefined();
+      .expect('Content-Type', /json/)
+      .expect(500);
+
+    const parsedResult3 = JSON.parse(createMessage.text);
+    expect(parsedResult3.success).toBeFalsy();
+    expect(parsedResult3.message).not.toBeUndefined();
+  });
 });
 
 //// ---- PUT REQUESTS: no message _id ---- ////
-test('PUT: missing message value', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('PUT: missing message value', () => {
+  const agent = request.agent(app);
+  let cookie;
+  it('Login & get cookie', async () => {
+    const firstLogin = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    const parsedResult1 = JSON.parse(firstLogin.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+  it('GET list of chatRooms', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const getLastFiftyMessages = await request(app)
-    .get(`/message/${chats[0]._id}`)
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
-  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer=${parsedResult3.token}`;
-  message = parsedResult3.data[0];
+  it('GET list of messages from a chatRoom', async () => {
+    const getLastFiftyMessages = await agent
+      .get(`/message/${chats[0]._id}`)
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const editMessage = await request(app)
-    .put('/message')
-    .send({
-      edit: "This post was made technically SAVED outside the test and inside the controller 😉",
-    })
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(500);
+    const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+    // let message = parsedResult3.data[0];
+  });
 
-  const parsedResult4 = JSON.parse(editMessage.text);
-  expect(parsedResult4.success).toBeFalsy();
-  expect(parsedResult4.token).not.toBeUndefined();
-  expect(parsedResult4.message).not.toBeUndefined();
+  it('PUT message request, missing chatRoom._id', async () => {
+    const editMessage = await agent
+      .put('/message')
+      .send({
+        edit: "This post was made technically SAVED outside the test and inside the controller 😉",
+      })
+      .expect('Content-Type', /json/)
+      .expect(500);
+
+    const parsedResult4 = JSON.parse(editMessage.text);
+    expect(parsedResult4.success).toBeFalsy();
+    expect(parsedResult4.message).not.toBeUndefined();
+  });
 });
 
 //// ---- DELETE REQUESTS: Malformed message _id ---- ////
-test('DELETE: malformed message _id', async () => {
-  let token;
-  const firstLogin = await request(app)
-    .post('/login')
-    .send({
-      userName: 'ValidUser',
-      password: 'fakePassword',
-    })
-    .expect("Content-Type", /json/)
-    .expect(200);
+describe('DELETE: malformed message _id', () => {
+  const agent = request.agent(app);
+  let cookie;
+  let message;
+  it('Login & get cookie', async () => {
+    const firstLogin = await agent
+      .post('/login')
+      .send({
+        userName: 'ValidUser',
+        password: 'fakePassword',
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
 
-  const parsedResult1 = JSON.parse(firstLogin.text);
-  expect(parsedResult1.success).toBeTruthy();
-  expect(parsedResult1.token).not.toBeUndefined();
-  token = `Bearer=${parsedResult1.token}`;
+    const parsedResult1 = JSON.parse(firstLogin.text);
+    expect(parsedResult1.success).toBeTruthy();
+  });
 
-  const getListOfChatRooms = await request(app)
-    .get('/chatRoom')
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
+  it('GET list of chatRooms', async () => {
+    const getListOfChatRooms = await agent
+      .get('/chatRoom')
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const parsedResult2 = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult2.success).toBeTruthy();
-  expect(parsedResult2.token).not.toBeUndefined();
-  expect(parsedResult2.data).not.toBeUndefined();
-  token = `Bearer=${parsedResult2.token}`;
+    const parsedResult2 = JSON.parse(getListOfChatRooms.text);
+    expect(parsedResult2.success).toBeTruthy();
+    expect(parsedResult2.data).not.toBeUndefined();
+  });
 
-  const getLastFiftyMessages = await request(app)
-    .get(`/message/${chats[0]._id}`)
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(200);
-  const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
-  token = `Bearer=${parsedResult3.token}`;
-  message = parsedResult3.data[0];
-  message._id = 'woeirulskdjflskd';
+  it('GET list of messages for a chatRoom', async () => {
+    const getLastFiftyMessages = await agent
+      .get(`/message/${chats[0]._id}`)
+      .expect('Content-Type', /json/)
+      .expect(200);
 
-  const deleteMessage = await request(app)
-    .delete('/message')
-    .send({
-      message: message,
-    })
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(500);
+    const parsedResult3 = JSON.parse(getLastFiftyMessages.text);
+    message = parsedResult3.data[0];
+    message._id = 'woeirulskdjflskd';
+  });
 
-  const parsedResult4 = JSON.parse(deleteMessage.text);
-  expect(parsedResult4.success).toBeFalsy();
-  expect(parsedResult4.token).not.toBeUndefined();
-  expect(parsedResult4.message).not.toBeUndefined();
+  it('DELETE message, malformed message._id', async () => {
+    const deleteMessage = await agent
+      .delete('/message')
+      .send({
+        message: message,
+      })
+      .expect('Content-Type', /json/)
+      .expect(500);
+
+    const parsedResult4 = JSON.parse(deleteMessage.text);
+    expect(parsedResult4.success).toBeFalsy();
+    expect(parsedResult4.message).not.toBeUndefined();
+  });
 });
 
 //// ---- Testing Middleware Failues ---- ////
-test('NO Token', async () => {
-  const getListOfChatRooms = await request(app)
-    .get('/message')
-    .expect('Content-Type', /json/)
-    .expect(403);
+describe('I\'m not sure what this is for', () => {
+  const agent = request.agent(app);
+  it('GET message detail, unauthorized', async () => {
+    const messageRequest = await agent
+      .get('/message')
+      .expect('Content-Type', /json/)
+      .expect(401);
 
-  const parsedResult = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult.success).toBeFalsy();
-  expect(parsedResult.token).toBeUndefined();
-  expect(parsedResult.data).toBeUndefined();
-  expect(parsedResult.message).toBe("Forbidden");
-});
+    const parsedResult = JSON.parse(messageRequest.text);
+    expect(parsedResult.success).toBeFalsy();
+    expect(parsedResult.data).toBeUndefined();
+    expect(parsedResult.message).toMatch(/Unauthorized/);
+  });
 
-test('BAD Token', async () => {
-  const token = "Bearer=sldkfj2o8374lskdjf..skdfjlkxjcvolil98234.sldkfjowieur982734";
-  const getListOfChatRooms = await request(app)
-    .get(`/message/${chats[0]._id}`)
-    .set('cookie', token)
-    .expect('Content-Type', /json/)
-    .expect(403);
+  it('GET list of messages, unauthorized', async () => {
+    const messageRequest = await agent
+      .get(`/message/${chats[0]._id}`)
+      .expect('Content-Type', /json/)
+      .expect(401);
 
-  const parsedResult = JSON.parse(getListOfChatRooms.text);
-  expect(parsedResult.success).toBeFalsy();
-  expect(parsedResult.token).toBeUndefined();
-  expect(parsedResult.data).toBeUndefined();
-  expect(parsedResult.message).toBe("Forbidden");
-});
+    const parsedResult = JSON.parse(messageRequest.text);
+    expect(parsedResult.success).toBeFalsy();
+    expect(parsedResult.data).toBeUndefined();
+    expect(parsedResult.message).toMatch(/Unauthorized/);
+  });
+})
