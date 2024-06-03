@@ -1,4 +1,4 @@
-import { showNotification, setCookie } from '../script.js';
+import { showNotification } from '../script.js';
 import { populateMessages } from './messages.js';
 const messagesSection = document.getElementById('messages_section');
 
@@ -50,7 +50,6 @@ export function setMessageBar(chatRoomId) {
           showNotification(data.message);
           throw new Error(data.message);
         }
-        setCookie(data.token);
       })
       .catch((err) => {
         showNotification(err);

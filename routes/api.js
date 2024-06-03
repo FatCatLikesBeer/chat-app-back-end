@@ -18,6 +18,7 @@ apiRouter.use('/login', loginRouter);
 apiRouter.use('/chatRoom', tokenMover, verifyToken, chatRoomRouter, payloadToJWT);
 apiRouter.use('/message', tokenMover, verifyToken, messageRouter, payloadToJWT);
 apiRouter.use('/user', tokenMover, verifyToken, userRouter, payloadToJWT);
+// apiRouter.use('/user', userRouter);
 apiRouter.get('/logout', (req, res, next) => {
   res.cookie("Barer", undefined).status(200).json({
     success: true,

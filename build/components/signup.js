@@ -1,6 +1,6 @@
 const signup_form = document.getElementById('signup_form');
 import { populateChats } from './chatRoom.js';
-import { showNotification, showApp, setCookie, deleteForm } from '../script.js';
+import { showNotification, showApp, deleteForm } from '../script.js';
 
 // Logic for signup
 // If signup successful, delete form, show notification, load app
@@ -23,7 +23,6 @@ signup_form.addEventListener('submit', function(event) {
       // Successful Signup
       if (data.success) {
         showApp(data.userData.userName);
-        setCookie(data.token);
         populateChats();
       }
     })

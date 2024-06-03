@@ -1,5 +1,5 @@
 const chatRoom_container = document.getElementById('chatRooms_container');
-import { showNotification, setCookie } from '../script.js';
+import { showNotification } from '../script.js';
 import { populateMessages } from './messages.js';
 import { setMessageBar } from './messageBar.js';
 
@@ -44,7 +44,6 @@ export function populateChats(chatRoomArray, userId) {
                 if (data.success) {
                   populateMessages(data.data, userId);
                   setMessageBar(element._id.toString());
-                  setCookie(data.token);
                   selectedChat = element._id.toString();
                 } else {
                   console.error(data.message);

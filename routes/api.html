@@ -43,6 +43,7 @@
       <li><a href="#login"><code>/login</code></a></li>
       <li><a href="#chatRoom"><code>/chatRoom</code></a></li>
       <li><a href="#message"><code>/message</code></a></li>
+      <li><a href="#user"><code>/user</code></a></li>
       <li><a href="#logout"><code>/logout</code></a></li>
     </menu>
     <div class="section">
@@ -368,6 +369,29 @@
       {
         success: true,
         message: "Logging Out"
+      }
+      </pre>
+    </div>
+    <div class="section">
+      <h3 id="user"><pre>/user</pre></h3>
+      <h5 class="subsection">GET</h5>
+      <h5 class="request">Expected Request</h5>
+      <pre class="code">
+      route: /user/:userName
+      </pre>
+      <h5 class="success">Expected Success Response</h5>
+      <pre class="code">
+      {
+        success: true,
+        message: "Matches found for userName",
+        data: Array
+      }
+      </pre>
+      <h5 class="failure">Expected Failure Response</h5>
+      <pre class="code">
+      {
+        success: false,
+        message: Get userName: Error accessing database:,
       }
       </pre>
     </div>

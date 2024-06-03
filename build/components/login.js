@@ -1,6 +1,6 @@
 const login_form = document.getElementById('login_form');
 import { populateChats } from './chatRoom.js';
-import { showNotification, showApp, setCookie, deleteForm } from '../script.js';
+import { showNotification, showApp, deleteForm } from '../script.js';
 
 // Logic for login
 // If login successful, delete form, show notification, load app
@@ -22,7 +22,6 @@ login_form.addEventListener('submit', function(event) {
       // Successful login
       if (data.success) {
         showApp(data.userData.userName);
-        setCookie(data.token);
         console.log(data)
         populateChats(data.chatRooms, data.userData._id.toString());
       }
