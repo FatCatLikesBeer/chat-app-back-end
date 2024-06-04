@@ -1,6 +1,5 @@
 import { logout } from '../script.js';
-const header = document.getElementById('header');
-const appContainer = document.getElementById('app_container');
+// const header = document.getElementById('header');
 
 // Create Menu Icon & Attributes
 const menuIcon = document.createElement('a');

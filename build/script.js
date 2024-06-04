@@ -1,3 +1,5 @@
+import { addMenu } from './components/addNew.js';
+
 import { menu } from './components/burgerMenuModal.js';
 import { populateChats } from './components/chatRoom.js';
 const title = document.getElementById('title');
@@ -24,6 +26,8 @@ export function showNotification(msg) {
 
 // Delete From Function
 export function deleteForm() {
+  form_container.setAttribute('disabled', '');
+  form_container.setAttribute('hidden', '');
   form_container.remove();
 }
 
@@ -31,7 +35,9 @@ export function deleteForm() {
 export function showApp(name) {
   deleteForm();
   menu.showMenu();
+  addMenu.showMenu();
   appContainer.removeAttribute('hidden');
+  appContainer.removeAttribute('disabled');
   title.innerText = `${name}`;
 }
 
