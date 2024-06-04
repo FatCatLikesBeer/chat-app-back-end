@@ -14,6 +14,11 @@ modalContainer.classList.add('close');
 modalContainer.innerHTML = "<menu><li><a id='add_chatRoom'>Create Chatroom</a></li><li><a id='add_user'>Add User</a></li></menu>"
 document.body.prepend(modalContainer);
 
+// State Object
+export let state = {
+  value: undefined,
+}
+
 // Modal Animations
 function modalClose() {
   add_modal.classList.remove('open');
@@ -24,6 +29,15 @@ function modalOpen() {
   add_modal.classList.remove('close');
   add_modal.classList.add('open');
   iconImage.innerText = 'close';
+  // When modal opens, check if a chatRoom is selected
+  // If no chatRoom is selected, then add_user button should be disabled
+  if (state.value === undefined) {
+    add_user.parentElement.setAttribute('disabled', '');
+    add_user.parentElement.setAttribute('hidden', '');
+  } else {
+    add_user.parentElement.removeAttribute('disabled');
+    add_user.parentElement.removeAttribute('hidden');
+  }
 }
 
 // Add Menu Icon animation
@@ -46,6 +60,27 @@ document.addEventListener('click', (event) => {
     modalClose();
   }
 });
+
+/* Menu Actions */
+// Add User Function
+function addUser(user) {
+  console.log("add_user clicked");
+}
+
+function addChatRoom() {
+  console.log('add_chatRoom clicked!');
+  // Create chatRoom fetch function goes here
+  // Fetch chatRoom URL
+  // After data successful, rerender chatRooms element
+}
+
+// add_user event listener
+add_user.addEventListener('click', addUser);
+
+// add_chatRoom event listener
+add_chatRoom.addEventListener('click', addChatRoom);
+
+
 
 // Export function to the call the Add Menu icon in & out of existence
 export const addMenu = {

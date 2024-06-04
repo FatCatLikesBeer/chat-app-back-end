@@ -2,8 +2,9 @@ const chatRoom_container = document.getElementById('chatRooms_container');
 import { showNotification } from '../script.js';
 import { populateMessages } from './messages.js';
 import { setMessageBar } from './messageBar.js';
+import { state } from './addNew.js';
 
-let selectedChat;
+export let selectedChat;
 
 export function populateChats(chatRoomArray, userId) {
   try {
@@ -39,12 +40,18 @@ export function populateChats(chatRoomArray, userId) {
                 'Content-Type': 'application/json',
               },
             })
-              .then(response => response.json())
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Error retrieving messages from api");
+                } else {
+                  return response.json();
+                }
+              })
               .then(data => {
                 if (data.success) {
                   populateMessages(data.data, userId);
                   setMessageBar(element._id.toString());
-                  selectedChat = element._id.toString();
+                  state.value = selectedChat = element._id.toString();
                 } else {
                   console.error(data.message);
                   showNotification(data.message);
@@ -55,6 +62,8 @@ export function populateChats(chatRoomArray, userId) {
                 showNotification(err);
                 console.error(err);
               });
+          } else {
+            console.log(`${selectedChat} is already selected!`);
           }
         });
       });
