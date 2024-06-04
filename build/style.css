@@ -145,3 +145,6 @@ menu {
   z-index: 1000;
 }
 
+.selected_chat {
+  background-color: pink;
+}

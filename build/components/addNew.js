@@ -9,14 +9,23 @@ iconImage.setAttribute('id', 'test');
 iconImage.innerText = 'add';
 iconContainer.appendChild(iconImage);
 
-// Create Modal Element
+// Create modal element & it's contents
 const modalContainer = document.createElement('div');
 modalContainer.setAttribute('id', 'add_modal');
 modalContainer.classList.add('close');
-modalContainer.innerHTML = "<menu><li><a id='add_chatRoom'>Create Chatroom</a></li><li><a id='add_user'>Add User</a></li></menu>"
+const modalElements = [];
+for (let i = 0; i < 3; i++) {
+  let id; let body;
+  const element = document.createElement('li');
+  if (i === 0) { id = 'add_chatRoom'; body = 'Create ChatRoom'; }
+  if (i === 1) { id = 'add_user'; body = 'Add User'; }
+  if (i === 2) { id = 'delete_chatroom'; body = 'Delete Chatroom'; }
+  element.innerHTML = `<a id=${id}>${body}</a>`;
+  modalContainer.appendChild(element);
+}
 document.body.prepend(modalContainer);
 
-// State Object
+// Object to comunicate state between here & ./chatRoom.js
 export let state = {
   value: undefined,
 }
@@ -69,6 +78,7 @@ function addUser(user) {
   console.log("add_user clicked");
 }
 
+// Add chatRoom function
 function addChatRoom() {
   console.log('add_chatRoom clicked!');
   fetch('/apiv1/chatRoom', {
@@ -84,13 +94,11 @@ function addChatRoom() {
     .then((data) => {
       console.log(data);
       populateChats(data.data, data.userData._id.toString());
+      modalClose();
     })
     .catch((err) => {
       console.error("Error creating chatRoom: ", err);
     })
-  // Create chatRoom fetch function goes here
-  // Fetch chatRoom URL
-  // After data successful, rerender chatRooms element
 }
 
 // add_user event listener

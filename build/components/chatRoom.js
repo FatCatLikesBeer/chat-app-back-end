@@ -4,8 +4,23 @@ import { populateMessages } from './messages.js';
 import { setMessageBar } from './messageBar.js';
 import { state } from './addNew.js';
 
-let selectedChat;
 const renderedChats = [];
+
+let currentlyHighlightedChat;
+function highlightChat(chatRoomId) {
+  const targetChat = document.getElementById(chatRoomId.toString());
+  if (currentlyHighlightedChat === undefined) {
+    targetChat.classList.add('selected_chat');
+    currentlyHighlightedChat = chatRoomId;
+    return;
+  }
+  const currentChat = document.getElementById(currentlyHighlightedChat);
+  if (chatRoomId != currentlyHighlightedChat) {
+    currentChat.classList.remove('selected_chat');
+    targetChat.classList.add('selected_chat');
+    currentlyHighlightedChat = chatRoomId;
+  }
+}
 
 export function populateChats(chatRoomArray, userId) {
   try {
@@ -38,7 +53,7 @@ export function populateChats(chatRoomArray, userId) {
 
           // Click Action
           chatRoom_element.addEventListener('click', (event) => {
-            if (selectedChat != element._id.toString()) {
+            if (state.value != element._id.toString()) {
               /* Call API for messages */
               fetch(`/apiv1/message/${element._id.toString()}`, {
                 headers: {
@@ -56,7 +71,8 @@ export function populateChats(chatRoomArray, userId) {
                   if (data.success) {
                     populateMessages(data.data, userId);
                     setMessageBar(element._id.toString());
-                    state.value = selectedChat = element._id.toString();
+                    state.value = element._id.toString();
+                    highlightChat(state.value);
                   } else {
                     console.error(data.message);
                     showNotification(data.message);
@@ -68,7 +84,7 @@ export function populateChats(chatRoomArray, userId) {
                   console.error(err);
                 });
             } else {
-              console.log(`${selectedChat} is already selected!`);
+              console.log(`${state.value} is already selected!`);
             }
           });
         }
