@@ -1,5 +1,4 @@
 import { addMenu } from './components/addNew.js';
-
 import { menu } from './components/burgerMenuModal.js';
 import { populateChats } from './components/chatRoom.js';
 const title = document.getElementById('title');
@@ -104,12 +103,8 @@ toggle.addEventListener('click', () => {
 // On Load:
 // Send Cookie/Token if it exists
 // If token valid, remove form, load app
-// If invalid or non-existant, do nothing.
-fetch('/apiv1/chatRoom', {
-  headers: {
-    'Content-Type': 'application/json',
-  }
-})
+// If invalid or non-existant show login/signup forms
+fetch('/apiv1/chatRoom')
   .then(response => response.json())
   .then(data => {
     showNotification(data.message);

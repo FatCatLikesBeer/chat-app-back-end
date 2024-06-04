@@ -1,3 +1,5 @@
+import { populateChats } from './chatRoom.js';
+
 // Create Add Menu Icon
 const iconContainer = document.createElement('span');
 const iconImage = document.createElement('a');
@@ -69,6 +71,23 @@ function addUser(user) {
 
 function addChatRoom() {
   console.log('add_chatRoom clicked!');
+  fetch('/apiv1/chatRoom', {
+    method: "POST",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("create chatRoom Error");
+      } else {
+        return response.json();
+      }
+    })
+    .then((data) => {
+      console.log(data);
+      populateChats(data.data, data.userData._id.toString());
+    })
+    .catch((err) => {
+      console.error("Error creating chatRoom: ", err);
+    })
   // Create chatRoom fetch function goes here
   // Fetch chatRoom URL
   // After data successful, rerender chatRooms element

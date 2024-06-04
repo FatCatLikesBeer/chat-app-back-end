@@ -12,12 +12,18 @@ login_form.addEventListener('submit', function(event) {
   fetch('/apiv1/login', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ 'userName': userName, "password": password })
   })
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Error loggin in");
+      } else {
+        return response.json();
+      }
+    })
+    .then((data) => {
       showNotification(data.message);
       // Successful login
       if (data.success) {
