@@ -6,9 +6,9 @@ import { showNotification, showApp, deleteForm } from '../script.js';
 // If login successful, delete form, show notification, load app
 // If login fail, retain form, show notification.
 login_form.addEventListener('submit', function(event) {
-  event.preventDefault();
   const userName = document.getElementById('login_userName').value;
   const password = document.getElementById('login_password').value;
+  event.preventDefault();
   fetch('/apiv1/login', {
     method: 'POST',
     headers: {
@@ -16,6 +16,10 @@ login_form.addEventListener('submit', function(event) {
     },
     body: JSON.stringify({ 'userName': userName, "password": password })
   })
+    .then((response) => {
+      document.getElementById('login_password').value = '';
+      return response;
+    })
     .then((response) => {
       if (!response.ok) {
         if (response.status != 400) {
@@ -34,7 +38,10 @@ login_form.addEventListener('submit', function(event) {
         populateChats(data.chatRooms, data.userData._id.toString());
       }
     })
-    .catch(error => {
+    .catch((error) => {
+      // The commented code below won't work!
+      // It only works outside the fetch request
+      // document.getElementById('login_password').value = '';
       showNotification(error);
       console.log(error);
     });

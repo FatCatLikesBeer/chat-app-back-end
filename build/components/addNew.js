@@ -80,12 +80,10 @@ document.addEventListener('click', (event) => {
 /* Menu Actions */
 // Add User button logic
 function addUser(user) {
-  console.log("add_user clicked");
 }
 
 // Add chatRoom button logic
 function addChatRoom() {
-  console.log('add_chatRoom clicked!');
   fetch('/apiv1/chatRoom', {
     method: "POST",
   })
