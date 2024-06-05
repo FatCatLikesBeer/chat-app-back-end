@@ -107,7 +107,7 @@ toggle.addEventListener('click', () => {
 fetch('/apiv1/chatRoom')
   .then(response => response.json())
   .then(data => {
-    showNotification(data.message);
+    showNotification("Welcome!");
     if (data.success) {
       showApp(data.userData.userName);
       populateChats(data.data, data.userData._id.toString());

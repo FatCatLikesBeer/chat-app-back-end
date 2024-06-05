@@ -18,12 +18,14 @@ login_form.addEventListener('submit', function(event) {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Error loggin in");
-      } else {
-        return response.json();
+        if (response.status != 400) {
+          throw new Error("Error requesting to server");
+        }
       }
+      return response.json();
     })
     .then((data) => {
+      // Unsuccessful response message
       showNotification(data.message);
       // Successful login
       if (data.success) {
@@ -34,7 +36,6 @@ login_form.addEventListener('submit', function(event) {
     })
     .catch(error => {
       showNotification(error);
-      deleteForm();
       console.log(error);
     });
 });
