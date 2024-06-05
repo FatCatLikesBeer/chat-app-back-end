@@ -1,4 +1,5 @@
 import { populateChats } from './chatRoom.js';
+import { deleteChatRoomModal } from './deleteChatRoomModal.js';
 
 // Create Add Menu Icon
 const iconContainer = document.createElement('span');
@@ -19,7 +20,7 @@ for (let i = 0; i < 3; i++) {
   const element = document.createElement('li');
   if (i === 0) { id = 'add_chatRoom'; body = 'Create ChatRoom'; }
   if (i === 1) { id = 'add_user'; body = 'Add User'; }
-  if (i === 2) { id = 'delete_chatroom'; body = 'Delete Chatroom'; }
+  if (i === 2) { id = 'delete_chatRoom'; body = 'Delete Chatroom'; }
   element.innerHTML = `<a id=${id}>${body}</a>`;
   modalContainer.appendChild(element);
 }
@@ -41,13 +42,17 @@ function modalOpen() {
   add_modal.classList.add('open');
   iconImage.innerText = 'close';
   // When modal opens, check if a chatRoom is selected
-  // If no chatRoom is selected, then add_user button should be disabled
+  // If no chatRoom is selected, then add_user & delete button button should be disabled
   if (state.value === undefined) {
     add_user.parentElement.setAttribute('disabled', '');
     add_user.parentElement.setAttribute('hidden', '');
+    delete_chatRoom.parentElement.setAttribute('disabled', '');
+    delete_chatRoom.parentElement.setAttribute('hidden', '');
   } else {
     add_user.parentElement.removeAttribute('disabled');
     add_user.parentElement.removeAttribute('hidden');
+    delete_chatRoom.parentElement.removeAttribute('disabled');
+    delete_chatRoom.parentElement.removeAttribute('hidden');
   }
 }
 
@@ -73,12 +78,12 @@ document.addEventListener('click', (event) => {
 });
 
 /* Menu Actions */
-// Add User Function
+// Add User button logic
 function addUser(user) {
   console.log("add_user clicked");
 }
 
-// Add chatRoom function
+// Add chatRoom button logic
 function addChatRoom() {
   console.log('add_chatRoom clicked!');
   fetch('/apiv1/chatRoom', {
@@ -101,13 +106,21 @@ function addChatRoom() {
     })
 }
 
+// Delete Chatroom button logic
+function deleteChatroom() {
+  modalClose();
+  deleteChatRoomModal(state.value);
+  // alert("Selected chatroom will be deleted!");
+}
+
 // add_user event listener
 add_user.addEventListener('click', addUser);
 
 // add_chatRoom event listener
 add_chatRoom.addEventListener('click', addChatRoom);
 
-
+// delete_chatRoom event listener
+delete_chatRoom.addEventListener('click', deleteChatroom);
 
 // Export function to the call the Add Menu icon in & out of existence
 export const addMenu = {

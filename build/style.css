@@ -36,7 +36,7 @@ a {
   background-color: gainsboro;
   width: 240px;
   padding: 8px;
-  z-index: 1000;
+  z-index: 999;
 }
 
 .open {
@@ -142,9 +142,21 @@ menu {
   background-color: gainsboro;
   width: 240px;
   padding: 8px;
-  z-index: 1000;
+  z-index: 999;
 }
 
 .selected_chat {
-  background-color: pink;
+  background-color: salmon;
+}
+
+#delete_chatRoom_modal {
+  border-radius: 10px;
+  position: absolute;
+  margin: 8px;
+  top: 100px;
+  right: auto;
+  left: auto;
+  padding: 8px;
+  z-index: 1000;
+  background-color: gold;
 }
