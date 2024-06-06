@@ -24,9 +24,7 @@ function highlightChat(chatRoomId) {
 
 export function populateChats(chatRoomArray, userId) {
   try {
-    // $('#chatRoom_container').empty();
-    // chatRoom_container.innerHTML = '';
-    if (chatRoomArray.length > 0) {
+    if (chatRoomArray?.length > 0) {
       chatRoomArray.forEach((element) => {
         if (!renderedChats.includes(element._id.toString())) {
           // Create chatContainer
@@ -74,14 +72,14 @@ export function populateChats(chatRoomArray, userId) {
                     state.value = element._id.toString();
                     highlightChat(state.value);
                   } else {
-                    console.error(data.message);
                     showNotification(data.message);
                     throw new Error("Error fetching messages: /components/chatRoom.js", data.message);
+                    console.error(data.message);
                   }
                 })
                 .catch(err => {
                   showNotification(err);
-                  console.error(err);
+                  console.error("Error: chatroom.js **:", err);
                 });
             } else {
               console.log(`${state.value} is already selected!`);
@@ -97,6 +95,6 @@ export function populateChats(chatRoomArray, userId) {
       chatRoom_container.appendChild(chatContainer);
     }
   } catch (error) {
-    showNotification("Error: chatRoom.js", error);
+    showNotification("Error: chatRoom.js *", error);
   }
 };

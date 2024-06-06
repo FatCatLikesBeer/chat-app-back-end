@@ -39,9 +39,6 @@ login_form.addEventListener('submit', function(event) {
       }
     })
     .catch((error) => {
-      // The commented code below won't work!
-      // It only works outside the fetch request
-      // document.getElementById('login_password').value = '';
       showNotification(error);
       console.log(error);
     });

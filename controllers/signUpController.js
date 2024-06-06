@@ -1,13 +1,11 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
-const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const { body, validationResult } = require('express-validator');
 
 require('dotenv').config();
 
-const LocalStrategy = require('passport-local').Strategy;
 const UserModel = require('../models/users');
 
 exports.signUp = [
@@ -43,7 +41,7 @@ exports.signUp = [
     .custom(async value => {
       const existingUser = await UserModel.findOne({ userName: value }).exec();
       if (existingUser) {
-        throw new Error('Username already exists');
+        throw new Error('Signup failed. Please check your details and try again.');
       }
     }),
 
@@ -53,7 +51,7 @@ exports.signUp = [
     .custom(async value => {
       const existingUser = await UserModel.findOne({ email: value }).exec();
       if (existingUser) {
-        throw new Error('Email already in use');
+        throw new Error('Signup failed. Please check your details and try again.');
       }
     }),
 
@@ -75,7 +73,7 @@ exports.signUp = [
     } else {
       // No errors in request body
       try {
-        bcrypt.hash(password, 12, async (err, hashedPassword) => {
+        bcrypt.hash(password, 12, async (error, hashedPassword) => {
           // Create a new user
           const newUser = new UserModel({
             userName: userName,
