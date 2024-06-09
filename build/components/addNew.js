@@ -1,5 +1,6 @@
 import { populateChats } from './chatRoom.js';
-import { deleteChatRoomModal } from './deleteChatRoomModal.js';
+import { deleteChatRoomConfirmation } from './deleteChatRoomConfirmation.js';
+import { userSearch } from './userSearchModal.js';
 
 // Create Add Menu Icon
 const iconContainer = document.createElement('span');
@@ -27,11 +28,13 @@ for (let i = 0; i < 3; i++) {
 document.body.prepend(modalContainer);
 
 // Object to comunicate state between here & ./chatRoom.js
+// This 'forigen' value allows the addMenu to add new users
+// and delete chatRooms
 export let state = {
   value: undefined,
 }
 
-// Modal Animations
+// Toggle Modal Open/Close
 function modalClose() {
   add_modal.classList.remove('open');
   add_modal.classList.add('close');
@@ -79,7 +82,8 @@ document.addEventListener('click', (event) => {
 
 /* Menu Actions */
 // Add User button logic
-function addUser(user) {
+function addUser() {
+  userSearch(state.value);
 }
 
 // Add chatRoom button logic
@@ -95,9 +99,11 @@ function addChatRoom() {
       }
     })
     .then((data) => {
-      console.log(data);
       populateChats(data.data, data.userData._id.toString());
       modalClose();
+      const latestChatRoom = document.getElementById('chatRooms_container').querySelector('div');
+      state.value = latestChatRoom.id;
+      userSearch(state.value);
     })
     .catch((err) => {
       console.error("Error creating chatRoom: ", err);
@@ -107,8 +113,7 @@ function addChatRoom() {
 // Delete Chatroom button logic
 function deleteChatroom() {
   modalClose();
-  deleteChatRoomModal(state.value);
-  // alert("Selected chatroom will be deleted!");
+  deleteChatRoomConfirmation(state.value);
 }
 
 // add_user event listener

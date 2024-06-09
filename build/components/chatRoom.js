@@ -26,6 +26,8 @@ export function populateChats(chatRoomArray, userId) {
   try {
     if (chatRoomArray?.length > 0) {
       chatRoomArray.forEach((element) => {
+        // If chatRoom doesn't exist in renderedChats,
+        // add chatRoom to page and to list of chats
         if (!renderedChats.includes(element._id.toString())) {
           // Create chatContainer
           const chatRoom_element = document.createElement('div');

@@ -1,6 +1,6 @@
 import { showNotification } from '../script.js';
 
-export function deleteChatRoomModal(chatRoomId) {
+export function deleteChatRoomConfirmation(chatRoomId) {
   const modal = document.createElement('div');
   modal.setAttribute('id', 'delete_chatRoom_modal');
   const cancelButton = document.createElement('button');
