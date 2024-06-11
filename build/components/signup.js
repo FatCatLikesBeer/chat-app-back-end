@@ -36,7 +36,7 @@ signup_form.addEventListener('submit', function(event) {
       showNotification(data.message);
       // Successful Signup
       if (data.success) {
-        showApp(data.userData.userName);
+        showApp(data.userData.userName, data.userData._id.toString());
         populateChats();
       } else {
         throw new Error(data.message);

@@ -70,7 +70,7 @@ export function populateChats(chatRoomArray, userId) {
                 .then(data => {
                   if (data.success) {
                     populateMessages(data.data, userId);
-                    setMessageBar(element._id.toString());
+                    setMessageBar(element._id.toString(), userId);
                     state.value = element._id.toString();
                     highlightChat(state.value);
                   } else {

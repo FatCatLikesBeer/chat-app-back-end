@@ -33,7 +33,7 @@ login_form.addEventListener('submit', function(event) {
       showNotification(data.message);
       // Successful login
       if (data.success) {
-        showApp(data.userData.userName);
+        showApp(data.userData.userName, data.userData._id.toString());
         console.log(data)
         populateChats(data.chatRooms, data.userData._id.toString());
       }

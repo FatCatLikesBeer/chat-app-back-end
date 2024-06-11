@@ -1,12 +1,16 @@
 import { addMenu } from './components/addNew.js';
 import { menu } from './components/burgerMenuModal.js';
 import { populateChats } from './components/chatRoom.js';
+import { appendMessage } from './components/messages.js';
 const title = document.getElementById('title');
 const form_container = document.getElementById('form_container');
 const signup_form = document.getElementById('signup_form');
 const login_form = document.getElementById('login_form');
 const notification = document.getElementById('notification');
 const appContainer = document.getElementById('app_container');
+
+// userData
+export let userData;
 
 // Login, signup, & page refresh logic
 import './components/login.js';
@@ -30,19 +34,23 @@ export function deleteForm() {
   form_container.remove();
 }
 
+// WebSocket Object
+export let ws;
+
 // Show app function
-export function showApp(name) {
+export function showApp(name, userId) {
   deleteForm();
   menu.showMenu();
   addMenu.showMenu();
   appContainer.removeAttribute('hidden');
   appContainer.removeAttribute('disabled');
   title.innerText = `${name}`;
-}
-
-// Set cookie function
-export function setCookie(token) {
-  // document.cookie = "Barer " + token;
+  // Connect to websocket
+  ws = new WebSocket('ws://localhost:3000');
+  ws.addEventListener('message', (event) => {
+    console.log("From the ws Eventlistener: script.js", (event.data));
+    appendMessage(JSON.parse(event.data), userId);
+  })
 }
 
 // Logout
@@ -109,7 +117,9 @@ fetch('/apiv1/chatRoom')
   .then(data => {
     showNotification("Welcome!");
     if (data.success) {
-      showApp(data.userData.userName);
+      userData = data.userData;
+      console.log("from script", data.userData._id.toString());
+      showApp(data.userData.userName, data.userData._id.toString());
       populateChats(data.data, data.userData._id.toString());
     } else {
       form_container.removeAttribute('hidden');
