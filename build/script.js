@@ -35,6 +35,8 @@ export function deleteForm() {
 }
 
 // WebSocket Object
+// chatRoom.js handles handshake
+// messageBar.js handles sending & reception of messages
 export let ws;
 
 // Show app function
@@ -45,12 +47,13 @@ export function showApp(name, userId) {
   appContainer.removeAttribute('hidden');
   appContainer.removeAttribute('disabled');
   title.innerText = `${name}`;
-  // Connect to websocket
-  ws = new WebSocket('ws://localhost:3000');
+
+  // WebSocket Stuff
+  ws = new WebSocket('ws://free.local:3000');
   ws.addEventListener('message', (event) => {
-    console.log("From the ws Eventlistener: script.js", (event.data));
-    appendMessage(JSON.parse(event.data), userId);
-  })
+    const message = JSON.parse(event.data);
+    appendMessage(message, userId);
+  });
 }
 
 // Logout
@@ -118,9 +121,8 @@ fetch('/apiv1/chatRoom')
     showNotification("Welcome!");
     if (data.success) {
       userData = data.userData;
-      console.log("from script", data.userData._id.toString());
       showApp(data.userData.userName, data.userData._id.toString());
-      populateChats(data.data, data.userData._id.toString());
+      populateChats(data.data, data.userData);
     } else {
       form_container.removeAttribute('hidden');
       login_form.removeAttribute('hidden');

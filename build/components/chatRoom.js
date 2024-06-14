@@ -1,4 +1,5 @@
 const chatRoom_container = document.getElementById('chatRooms_container');
+import { webSocketHandshake } from './websocket.js';
 import { showNotification } from '../script.js';
 import { populateMessages } from './messages.js';
 import { setMessageBar } from './messageBar.js';
@@ -22,11 +23,14 @@ function highlightChat(chatRoomId) {
   }
 }
 
-export function populateChats(chatRoomArray, userId) {
+let deleteMe = 0;
+
+export function populateChats(chatRoomArray, userData) {
+  const userId = userData._id.toString();
   try {
     if (chatRoomArray?.length > 0) {
       chatRoomArray.forEach((element) => {
-        // If chatRoom doesn't exist in renderedChats,
+        // If particular chatRoom doesn't exist in renderedChats,
         // add chatRoom to page and to list of chats
         if (!renderedChats.includes(element._id.toString())) {
           // Create chatContainer
@@ -53,6 +57,7 @@ export function populateChats(chatRoomArray, userId) {
 
           // Click Action
           chatRoom_element.addEventListener('click', (event) => {
+
             if (state.value != element._id.toString()) {
               /* Call API for messages */
               fetch(`/apiv1/message/${element._id.toString()}`, {
@@ -73,6 +78,10 @@ export function populateChats(chatRoomArray, userId) {
                     setMessageBar(element._id.toString(), userId);
                     state.value = element._id.toString();
                     highlightChat(state.value);
+
+                    // WebSocket Handshake
+                    webSocketHandshake(element._id.toString(), userData);
+
                   } else {
                     showNotification(data.message);
                     throw new Error("Error fetching messages: /components/chatRoom.js", data.message);

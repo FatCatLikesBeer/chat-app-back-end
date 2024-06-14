@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const path = require('path');
 const WebSocket = require('ws');
 const cookieParser = require('cookie-parser');
+const { wsConnection } = require('./middleware/webSocketServer');
 
 require('dotenv').config();
 const LocalStrategy = require("passport-local").Strategy;
@@ -66,23 +67,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // WebSocket Server
-wss.on('connection', (ws) => {
-  console.log('New WebSocket client connected');
-
-  ws.on('message', (message) => {
-    const messageString = message.toString();
-
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(messageString);
-      }
-    });
-  });
-
-  ws.on('close', () => {
-    console.log("WebSocket client disconnected");
-  });
-});
+wss.on('connection', wsConnection);
 
 // Routing
 app.get('/', (req, res) => {

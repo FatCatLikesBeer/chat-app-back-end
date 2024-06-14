@@ -25,13 +25,17 @@ export function setMessageBar(chatRoomId, userId) {
   messagesSection.appendChild(messageBarContainer);
   messageSendButton.addEventListener('click', sendMessage);
 
+  // Disconnect from pre-existing WebSocket
+  // and connect to a new one
+
   // Click event listener cb function
   function sendMessage() {
     if (messageArea.value != "") {
 
       // Send through WebSocket
       const wsMessageContent = {
-        chatRoom: chatRoomId,
+        type: 'message',
+        chatRoomId: chatRoomId,
         userName: title.innerText.toString(),
         message: `${messageArea.value.toString()}`,
         _id: userId,

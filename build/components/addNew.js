@@ -99,7 +99,7 @@ function addChatRoom() {
       }
     })
     .then((data) => {
-      populateChats(data.data, data.userData._id.toString());
+      populateChats(data.data, data.userData);
       modalClose();
       const latestChatRoom = document.getElementById('chatRooms_container').querySelector('div');
       state.value = latestChatRoom.id;
