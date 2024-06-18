@@ -19,6 +19,7 @@ const bcrypt = require('bcryptjs');
   let billy;
   let silly;
   let milly;
+  let quotes;
   bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
     billy = new UserModel({
       userName: 'billy',
@@ -35,6 +36,14 @@ const bcrypt = require('bcryptjs');
     });
     await milly.save();
   });
+  bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
+    quotes = new UserModel({
+      userName: 'quotes',
+      email: 'itisbilly@icloud.com',
+      password: hashedPassword,
+    });
+    await quotes.save();
+  })
   bcrypt.hash('greenbottle', 12, async (err, hashedPassword) => {
     silly = new UserModel({
       userName: 'silly',

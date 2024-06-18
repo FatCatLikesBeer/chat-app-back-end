@@ -49,6 +49,11 @@ export function populateChats(chatRoomArray, userData) {
               allUserNames.appendChild(userName);
             }
           });
+
+          if (allUserNames.innerHTML === "") {
+            allUserNames.innerHTML = "<p class='participants'>🛑 Empty Chat</p>";
+          }
+
           chatRoom_element.appendChild(allUserNames);
 
           // Add chatContainer to chatRooms_container and renderedChats state object
@@ -56,7 +61,7 @@ export function populateChats(chatRoomArray, userData) {
           chatRoom_container.prepend(chatRoom_element);
 
           // Click Action
-          chatRoom_element.addEventListener('click', (event) => {
+          chatRoom_element.addEventListener('click', () => {
 
             if (state.value != element._id.toString()) {
               /* Call API for messages */
