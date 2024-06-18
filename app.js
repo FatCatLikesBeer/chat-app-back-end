@@ -30,6 +30,8 @@ const serverState = process.env.DEV || "prod";
 if (serverState === "dev") {
   // This is required only to prevent 10,000 ms response times via cURL testing
   require("./servers/development");
+} else {
+  require("./servers/production");
 }
 
 //// ------ Passport Stuff ------ ////
