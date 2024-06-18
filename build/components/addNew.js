@@ -15,6 +15,7 @@ iconContainer.appendChild(iconImage);
 const modalContainer = document.createElement('div');
 modalContainer.setAttribute('id', 'add_modal');
 modalContainer.classList.add('close');
+modalContainer.innerHTML = '<menu></menu>';
 const modalElements = [];
 for (let i = 0; i < 3; i++) {
   let id; let body;
@@ -23,7 +24,7 @@ for (let i = 0; i < 3; i++) {
   if (i === 1) { id = 'add_user'; body = 'Add User'; }
   if (i === 2) { id = 'delete_chatRoom'; body = 'Delete Chatroom'; }
   element.innerHTML = `<a id=${id}>${body}</a>`;
-  modalContainer.appendChild(element);
+  modalContainer.querySelector('menu').appendChild(element);
 }
 document.body.prepend(modalContainer);
 
@@ -136,5 +137,3 @@ export const addMenu = {
     }
   },
 }
-
-

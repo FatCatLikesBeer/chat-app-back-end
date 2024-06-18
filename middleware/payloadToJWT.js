@@ -14,7 +14,7 @@ const sendPayload = asyncHandler(async (req, res, next) => {
   const errorFlag = req.error || 'undefined';
 
   // Generate token and send this stuff off!
-  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10d' }, (err, token) => {
+  jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10w' }, (err, token) => {
     if (err) {
       console.error("Error generating token", err);
       res.json({

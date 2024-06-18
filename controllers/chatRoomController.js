@@ -100,7 +100,7 @@ exports.chatRoomEdit = asyncHandler(async (req, res, next) => {
       // For each element in the req.body.add, only add
       // element if not already in participants array
       req.body.add.forEach(elem => {
-        if (!chatRoom.participants.some(function(chatters) { chatters._id.toString() === elem._id.toString() })) {
+        if (!chatRoom.participants.some(function(chatters) { return chatters._id.toString() === elem._id.toString() })) {
           chatRoom.participants.push(elem);
         }
       });

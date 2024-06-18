@@ -24,6 +24,7 @@ export function populateMessages(messagesArray, userId) {
     msgContainer.appendChild(msgMessage);
     msgTier.appendChild(msgContainer);
 
+    // Sender Recipiant Styling
     if (msg.author._id.toString() === userId) {
       msgTier.setAttribute('class', 'msg_tier_sender');
       msgContainer.setAttribute('class', 'msg_container msg_sender');
@@ -34,6 +35,7 @@ export function populateMessages(messagesArray, userId) {
 
     // Put containers into document
     messages_container.prepend(msgTier);
+    messages_container.scrollTop = messages_container.scrollHeight;
   });
 }
 
@@ -58,6 +60,7 @@ export function appendMessage(message, userId) {
   msgContainer.appendChild(msgMessage);
   msgTier.appendChild(msgContainer);
 
+  // Sender Recipiant Styling
   if (message._id.toString() === userId.toString()) {
     msgTier.setAttribute('class', 'msg_tier_sender');
     msgContainer.setAttribute('class', 'msg_container msg_sender');
@@ -65,7 +68,14 @@ export function appendMessage(message, userId) {
     msgTier.setAttribute('class', 'msg_tier_recipiant');
     msgContainer.setAttribute('class', 'msg_container msg_recipiant');
   }
+  // Notification Styling
+  if (message.type === "notification") {
+    msgTier.setAttribute('class', 'msg_tier_notification');
+    msgContainer.setAttribute('class', 'msg_container msg_notification');
+    msgContainer.removeChild(msgAuthor);
+  }
 
   // Put containers into document
   messages_container.append(msgTier);
+  messages_container.scrollTop = messages_container.scrollHeight;
 }

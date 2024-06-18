@@ -41,6 +41,7 @@ export let ws;
 
 // Show app function
 export function showApp(name, userId) {
+  document.querySelector('#show_chats').removeAttribute('hidden');
   deleteForm();
   menu.showMenu();
   addMenu.showMenu();
@@ -53,6 +54,48 @@ export function showApp(name, userId) {
   ws.addEventListener('message', (event) => {
     const message = JSON.parse(event.data);
     appendMessage(message, userId);
+  });
+
+  // Show/hide chatrooms for mobile screen sizes
+  const hideChatRooms = () => {
+    show_chats.querySelector('a').innerText = 'arrow_forward_ios';
+    chatRooms_container.style.display = "none";
+  }
+  const showChatRooms = () => {
+    show_chats.querySelector('a').innerText = 'close';
+    chatRooms_container.style.display = "block";
+  }
+
+  const handleTouch = () => {
+    if (show_chats.querySelector('a').innerText === 'arrow_forward_ios') {
+      showChatRooms();
+    } else {
+      hideChatRooms();
+    }
+
+    document.addEventListener('click', (event) => {
+      if (!show_chats.contains(event.target) && !chatRooms_container.contains(event.target) && window.innerWidth <= 650) {
+        hideChatRooms();
+      }
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        hideChatRooms();
+      }
+    })
+  }
+  // Run this once just to get things to work on login
+  handleTouch();
+
+  show_chats.addEventListener('click', handleTouch);
+  window.addEventListener('resize', (event) => {
+    // If window small hide chatRooms, else show them
+    if (window.innerWidth <= 650) {
+      hideChatRooms();
+    } else {
+      showChatRooms();
+    }
   });
 }
 

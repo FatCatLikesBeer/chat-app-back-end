@@ -6,16 +6,18 @@ const menuIcon = document.createElement('a');
 menuIcon.innerText = 'menu';
 
 // Create Menu Icon Container & Attributes
-const menuContainer = document.createElement('span');
-menuContainer.setAttribute('id', 'menu');
-menuContainer.setAttribute('class', 'material-symbols-outlined');
-menuContainer.appendChild(menuIcon);
+const iconContainer = document.createElement('span');
+iconContainer.setAttribute('id', 'menu');
+iconContainer.setAttribute('class', 'material-symbols-outlined');
+iconContainer.appendChild(menuIcon);
 
 // Create Modal & Attributes
 const modalContainer = document.createElement('div');
 modalContainer.setAttribute('id', 'modal');
 modalContainer.classList.add('close');
-modalContainer.innerHTML = "<menu><li><a id='logout'>Logout</a></li></menu>"
+modalContainer.innerHTML = "<menu></menu>";
+modalContainer.querySelector('menu').innerHTML = "<li><a id='logout'>Logout</a></li>";
+modalContainer.querySelector('menu').innerHTML += "<li><a id='enable_notifications'>Enable Notifications</a></li>";
 document.body.prepend(modalContainer);
 //I would like to do the code below but it doesn't want to work
 //appContainer.prepend(modalContainer);
@@ -46,7 +48,7 @@ function modalOpen() {
 
 // Close modal if click outside of modal
 document.addEventListener('click', (event) => {
-  if (isModalOpen === true && !modalContainer.contains(event.target) && !menuContainer.contains(event.target)) {
+  if (isModalOpen === true && !modalContainer.contains(event.target) && !iconContainer.contains(event.target)) {
     modalClose();
     isModalOpen = !isModalOpen;
   }
@@ -64,14 +66,20 @@ document.getElementById('logout').addEventListener('click', () => {
   logout();
 });
 
+enable_notifications.addEventListener('click', (event) => {
+  Notification.requestPermission().then((permission) => {
+    console.log(permission);
+  });
+});
+
 // Export function to the call the menu icon in & out of existence
 export const menu = {
   showMenu() {
-    header.appendChild(menuContainer);
+    header.appendChild(iconContainer);
   },
   removeMenu() {
     if (document.getElementById('menu') != null) {
-      header.removeChild(menuContainer);
+      header.removeChild(iconContainer);
     }
   },
 }

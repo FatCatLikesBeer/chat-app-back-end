@@ -19,8 +19,7 @@ exports.wsConnection = (ws) => {
           userName: userName,
           message: `${userName} has joined the chat!`,
         }
-        broadcastMessage(chatRoomId, joinMessage);
-        console.log(chatRoomsList);
+        broadcastNotification(chatRoomId, joinMessage);
         break;
 
       case 'message':
@@ -45,7 +44,6 @@ exports.wsConnection = (ws) => {
 }
 
 const broadcastMessage = (chatRoomId, parsedMessage) => {
-  console.log('broadcastMessage, message recieved: ', parsedMessage);
   if (chatRoomsList[chatRoomId]) {
     chatRoomsList[chatRoomId].forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
@@ -54,6 +52,23 @@ const broadcastMessage = (chatRoomId, parsedMessage) => {
           userName: parsedMessage.userName,
           chatRoomId: parsedMessage.chatRoomId,
           message: parsedMessage.message,
+          type: "message",
+        }));
+      }
+    });
+  }
+}
+
+const broadcastNotification = (chatRoomId, parsedMessage) => {
+  if (chatRoomsList[chatRoomId]) {
+    chatRoomsList[chatRoomId].forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({
+          _id: parsedMessage._id,
+          userName: parsedMessage.userName,
+          chatRoomId: parsedMessage.chatRoomId,
+          message: parsedMessage.message,
+          type: "notification",
         }));
       }
     });
@@ -70,10 +85,10 @@ function leaveChatRoom(ws) {
       delete chatRoomsList[chatRoomId];
       console.log('Chatroom has been deleted');
     } else {
-      broadcastMessage(chatRoomId, {
+      broadcastNotification(chatRoomId, {
         message: `${userName} has left the chat`,
         _id: `message_id_${leaveId}`,
-        userName: 'Server',
+        userName: userName,
         chatRoomId: chatRoomId,
       });
       leaveId += 1;
