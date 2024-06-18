@@ -13,6 +13,7 @@ export function setMessageBar(chatRoomId, userId) {
   const messageBarContainer = document.createElement('div');
   messageBarContainer.setAttribute('id', 'message_bar_container');
   const messageArea = document.createElement('textarea');
+  messageArea.setAttribute('placeholder', '/help');
   messageArea.setAttribute('class', 'message_area');
   messageArea.setAttribute('id', `textarea_${chatRoomId}`)
   const messageSendButton = document.createElement('button');
