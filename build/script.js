@@ -80,7 +80,7 @@ export function showApp(name, userId) {
     })
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && window.innerWidth <= 650) {
         hideChatRooms();
       }
     })

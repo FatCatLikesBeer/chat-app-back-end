@@ -18,6 +18,7 @@ modalContainer.classList.add('close');
 modalContainer.innerHTML = "<menu></menu>";
 modalContainer.querySelector('menu').innerHTML = "<li><a id='logout'>Logout</a></li>";
 modalContainer.querySelector('menu').innerHTML += "<li><a id='enable_notifications'>Enable Notifications</a></li>";
+modalContainer.querySelector('menu').innerHTML += "<li><a id='about'>About</a></li>";
 document.body.prepend(modalContainer);
 //I would like to do the code below but it doesn't want to work
 //appContainer.prepend(modalContainer);
@@ -70,6 +71,16 @@ enable_notifications.addEventListener('click', (event) => {
   Notification.requestPermission().then((permission) => {
     console.log(permission);
   });
+});
+
+about.addEventListener('click', () => {
+  const aboutModal = document.getElementById('about_modal');
+  aboutModal.show();
+  document.addEventListener('click', (event) => {
+    if (!document.getElementById('modal').contains(event.target)) {
+      aboutModal.close();
+    }
+  })
 });
 
 // Export function to the call the menu icon in & out of existence

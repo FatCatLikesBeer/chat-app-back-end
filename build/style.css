@@ -252,3 +252,8 @@ textarea {
     margin-right: auto;
   }
 }
+
+#about_modal {
+  background-color: white;
+  z-index: 1000;
+}
