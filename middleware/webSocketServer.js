@@ -1,17 +1,6 @@
 const chatRoomsList = {};
-const keyWords = ['/help', '/quote', '/about', '/bored'];
-const quotes = [
-  "You must be the change you wish to see in the world. -Mahatma Gandhi",
-  "Spread love everywhere you go. Let no one ever come to you without leaving happier. -Mother Teresa",
-  "The only thing we have to fear is fear itself. -Franklin D. Roosevelt",
-  "Darkness cannot drive out darkness: only light can do that. Hate cannot drive out hate: only love can do that. -Martin Luther King Jr.",
-  "Do one thing every day that scares you. -Eleanor Roosevelt",
-  "Well done is better than well said. -Benjamin Franklin",
-  "The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart. -Helen Keller",
-  "It is during our darkest moments that we must focus to see the light. -Aristotle",
-  "Do not go where the path may lead, go instead where there is no path and leave a trail. -Ralph Waldo Emerson",
-  "Be yourself; everyone else is already taken. -Oscar Wilde"
-];
+const keyWords = ['/help', '/quote', '/about', '/bored', '/fact', '/joke'];
+const { quotes, facts, jokes } = require('./webSocketServerExtras');
 
 exports.wsConnection = (ws) => {
   ws.on('message', (event) => {
@@ -64,7 +53,7 @@ const narrowCastMessage = async (chatRoomId, parsedMessage) => {
   let message;
   switch (parsedMessage.message) {
     case '/help':
-      message = "Play with WebSockets!\n\nOnly you can see these messages from The Socket\n\n/help to show this message again\n/quote for some words from a famous person\n/bored for something to entertain programmers\n/about for about";
+      message = "Play with WebSockets!\n\nOnly you can see these messages from The Socket.\n\nMessages from The Socket will dissapear when you join a new chatroom, when you refresh the page, or when you log back in.\n\n/help to show this message again\n/quote for some words from a famous person\n/bored for something to entertain programmers\n/joke for some dad jokes\n/fact for interesting facts\n/about for about";
       break;
     case '/quote':
       message = quotes[Math.floor(Math.random() * quotes.length)];
@@ -82,6 +71,12 @@ const narrowCastMessage = async (chatRoomId, parsedMessage) => {
           result += data.description;
           return result;
         });
+      break;
+    case '/joke':
+      message = jokes[Math.floor(Math.random() * jokes.length)];
+      break;
+    case '/fact':
+      message = facts[Math.floor(Math.random() * facts.length)];
       break;
     default:
       message = "Sorry, helper is broken...";
