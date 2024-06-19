@@ -39,7 +39,9 @@ export function populateChats(chatRoomArray, userData) {
           // I'm creating an allUserNames anchor so it works well with vimium
           const allUserNames = document.createElement('a');
           allUserNames.setAttribute('class', 'participants');
+          let listOfNames = state.participants[element._id.toString()] = [];
           element.participants.forEach((elem) => {
+            listOfNames.push(elem.userName);
             if (elem._id.toString() != userId.toString()) {
               const userName = document.createElement('p');
               userName.setAttribute('class', 'participant');

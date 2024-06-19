@@ -8,7 +8,7 @@ const iconImage = document.createElement('a');
 iconContainer.setAttribute('id', 'add_menu');
 iconContainer.setAttribute('class', 'material-symbols-outlined');
 iconImage.setAttribute('id', 'test');
-iconImage.innerText = 'add';
+iconImage.innerText = 'info';
 iconContainer.appendChild(iconImage);
 
 // Create modal element & it's contents
@@ -17,12 +17,13 @@ modalContainer.setAttribute('id', 'add_modal');
 modalContainer.classList.add('close');
 modalContainer.innerHTML = '<menu></menu>';
 const modalElements = [];
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 4; i++) {
   let id; let body;
   const element = document.createElement('li');
   if (i === 0) { id = 'add_chatRoom'; body = 'Create ChatRoom'; }
   if (i === 1) { id = 'add_user'; body = 'Add User'; }
   if (i === 2) { id = 'delete_chatRoom'; body = 'Delete Chatroom'; }
+  if (i === 3) { id = 'participants'; body = 'Participants'; }
   element.innerHTML = `<a id=${id}>${body}</a>`;
   modalContainer.querySelector('menu').appendChild(element);
 }
@@ -33,15 +34,28 @@ document.body.prepend(modalContainer);
 // and delete chatRooms
 export let state = {
   value: undefined,
+  participants: {},
 }
 
 // Toggle Modal Open/Close
 function modalClose() {
   add_modal.classList.remove('open');
   add_modal.classList.add('close');
-  iconImage.innerText = 'add';
+  iconImage.innerText = 'info';
+  document.getElementById('participants_list').remove();
 }
 function modalOpen() {
+  // Append currentChatroom users to an element and display that
+  const menuSelector = document.getElementById('add_modal').querySelector('menu');
+  const participantsDisplayList = document.createElement('ul');
+  participantsDisplayList.setAttribute('id', 'participants_list');
+  state.participants[state.value].forEach((elem) => {
+    const participantDisplay = document.createElement('li');
+    participantDisplay.innerText = `${elem}`;
+    participantsDisplayList.appendChild(participantDisplay);
+  });
+  menuSelector.appendChild(participantsDisplayList);
+
   add_modal.classList.remove('close');
   add_modal.classList.add('open');
   iconImage.innerText = 'close';
@@ -62,7 +76,7 @@ function modalOpen() {
 
 // Add Menu Icon animation
 iconContainer.addEventListener('click', (event) => {
-  if (iconImage.innerText === 'add') {
+  if (iconImage.innerText === 'info') {
     modalOpen();
   } else {
     modalClose();
