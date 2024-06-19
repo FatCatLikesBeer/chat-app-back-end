@@ -9,6 +9,7 @@ a {
 #show_chats {
   display: none;
   margin-bottom: 8px;
+  width: 50px;
 }
 
 #header {

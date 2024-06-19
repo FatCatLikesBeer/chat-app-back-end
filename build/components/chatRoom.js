@@ -23,8 +23,6 @@ function highlightChat(chatRoomId) {
   }
 }
 
-let deleteMe = 0;
-
 export function populateChats(chatRoomArray, userData) {
   const userId = userData._id.toString();
   try {
@@ -52,6 +50,15 @@ export function populateChats(chatRoomArray, userData) {
 
           if (allUserNames.innerHTML === "") {
             allUserNames.innerHTML = "<p class='participants'>🛑 Empty Chat</p>";
+          }
+
+          if (allUserNames.childElementCount > 1) {
+            const firstChild = allUserNames.firstElementChild;
+            const numberApendage = document.createElement('p');
+            numberApendage.innerText = `+${allUserNames.childElementCount - 1}...`;
+            allUserNames.innerHTML = "";
+            allUserNames.appendChild(firstChild);
+            allUserNames.appendChild(numberApendage);
           }
 
           chatRoom_element.appendChild(allUserNames);
