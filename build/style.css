@@ -258,3 +258,7 @@ textarea {
   background-color: white;
   z-index: 1000;
 }
+
+ul {
+  margin-bottom: 0px;
+}

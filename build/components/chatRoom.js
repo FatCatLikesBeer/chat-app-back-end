@@ -57,7 +57,7 @@ export function populateChats(chatRoomArray, userData) {
           if (allUserNames.childElementCount > 1) {
             const firstChild = allUserNames.firstElementChild;
             const numberApendage = document.createElement('p');
-            numberApendage.innerText = `+${allUserNames.childElementCount - 1}...`;
+            numberApendage.innerText = `+ ${allUserNames.childElementCount - 1}`;
             allUserNames.innerHTML = "";
             allUserNames.appendChild(firstChild);
             allUserNames.appendChild(numberApendage);

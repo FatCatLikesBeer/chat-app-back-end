@@ -17,7 +17,7 @@ modalContainer.setAttribute('id', 'add_modal');
 modalContainer.classList.add('close');
 modalContainer.innerHTML = '<menu></menu>';
 const modalElements = [];
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < 3; i++) {
   let id; let body;
   const element = document.createElement('li');
   if (i === 0) { id = 'add_chatRoom'; body = 'Create ChatRoom'; }
@@ -42,19 +42,28 @@ function modalClose() {
   add_modal.classList.remove('open');
   add_modal.classList.add('close');
   iconImage.innerText = 'info';
-  document.getElementById('participants_list').remove();
+  if (state.value != undefined) {
+    document.getElementById('participants_list').remove();
+    document.getElementById('add_modal').querySelector('menu').lastElementChild.remove();
+  }
 }
 function modalOpen() {
   // Append currentChatroom users to an element and display that
-  const menuSelector = document.getElementById('add_modal').querySelector('menu');
-  const participantsDisplayList = document.createElement('ul');
-  participantsDisplayList.setAttribute('id', 'participants_list');
-  state.participants[state.value].forEach((elem) => {
-    const participantDisplay = document.createElement('li');
-    participantDisplay.innerText = `${elem}`;
-    participantsDisplayList.appendChild(participantDisplay);
-  });
-  menuSelector.appendChild(participantsDisplayList);
+  if (state.value != undefined) {
+    const participantsListElement = document.createElement('li');
+    participantsListElement.setAttribute('id', 'participants');
+    participantsListElement.innerText = 'Participants';
+    document.getElementById('add_modal').querySelector('menu').appendChild(participantsListElement);
+    const menuSelector = document.getElementById('add_modal').querySelector('menu');
+    const participantsDisplayList = document.createElement('ul');
+    participantsDisplayList.setAttribute('id', 'participants_list');
+    state.participants[state.value].forEach((elem) => {
+      const participantDisplay = document.createElement('li');
+      participantDisplay.innerText = `${elem}`;
+      participantsDisplayList.appendChild(participantDisplay);
+    });
+    menuSelector.appendChild(participantsDisplayList);
+  }
 
   add_modal.classList.remove('close');
   add_modal.classList.add('open');
