@@ -72,7 +72,7 @@ export function populateChats(chatRoomArray, userData) {
           // Click Action
           chatRoom_element.addEventListener('click', () => {
 
-            if (state.value != element._id.toString()) {
+            if (true) {
               /* Call API for messages */
               fetch(`/apiv1/message/${element._id.toString()}`, {
                 headers: {
@@ -99,7 +99,6 @@ export function populateChats(chatRoomArray, userData) {
                   } else {
                     showNotification(data.message);
                     throw new Error("Error fetching messages: /components/chatRoom.js", data.message);
-                    console.error(data.message);
                   }
                 })
                 .catch(err => {
