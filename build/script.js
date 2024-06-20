@@ -50,7 +50,7 @@ export function showApp(name, userId) {
   title.innerText = `${name}`;
 
   // WebSocket Stuff
-  ws = new WebSocket('ws://10.0.0.8:3000/');
+  ws = new WebSocket('wss://bluebubbles.fly.dev/');
   ws.addEventListener('message', (event) => {
     const message = JSON.parse(event.data);
     appendMessage(message, userId);
