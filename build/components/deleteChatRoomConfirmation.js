@@ -41,7 +41,12 @@ export function deleteChatRoomConfirmation(chatRoomId) {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Error with delete chatRoom response");
+          if (response.status == 403) {
+            return response.json();
+          } else {
+            console.log(response);
+            throw new Error("Error with delete chatRoom response");
+          }
         } else {
           return response.json();
         }

@@ -76,6 +76,7 @@ export function setMessageBar(chatRoomId, userId) {
           console.error(err);
         });
       messageArea.value = "";
+      messageArea.focus();
     }
   }
 }

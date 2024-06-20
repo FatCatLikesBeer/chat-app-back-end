@@ -162,8 +162,21 @@ exports.chatRoomDelete = asyncHandler(async (req, res, next) => {
     const tokenData = req.tokenData;
 
     const deleteThisRoom = req.body.chatRoom;
-    await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
-    const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+
+    // Verify chatRoom ownership
+    const chatRoom = await ChatRoomModel.findById(deleteThisRoom).exec();
+    console.log(chatRoom.owner);
+    if (chatRoom.owner.toString() != req.tokenData._id.toString()) {
+      req.error = 403;
+      req.response = {
+        success: false,
+        message: 'Only chatroom owners can delete',
+      }
+      next();
+    } else {
+      await ChatRoomModel.findByIdAndDelete(deleteThisRoom).exec();
+      const chatRooms = await ChatRoomModel.find({ owner: tokenData._id }).exec();
+    }
 
     // Save the JSON API response
     req.response = {

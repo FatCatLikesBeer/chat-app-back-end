@@ -36,3 +36,5 @@ exports.facts = [
   "There are more atoms in a teaspoon of water than there are teaspoons of water in the Atlantic Ocean.",
   "A pizza with a radius of 'z' and a height of 'a' will have a volume of Pi*z*z*a",
 ]
+
+exports.webapp = "Save To Home Screen\n\nSave to home screen so this chat app feels like a native app!\n\nAndroid:\nClick the 3 dots in the upper right hand corner of your browser.\nClick 'Add to Home screen'\nClick Add\nAll Done!\n\niOS: \nOpen this site in Safari (must be Safari)\nClick the 'Share' button in the bottom\nClick 'Add to Home Screen'\nClick 'Add'";

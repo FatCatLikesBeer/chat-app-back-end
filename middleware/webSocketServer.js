@@ -1,6 +1,6 @@
 const chatRoomsList = {};
-const keyWords = ['/help', '/quote', '/about', '/bored', '/fact', '/joke'];
-const { quotes, facts, jokes } = require('./webSocketServerExtras');
+const keyWords = ['/help', '/quote', '/about', '/bored', '/fact', '/joke', '/webapp'];
+const { quotes, facts, jokes, webapp } = require('./webSocketServerExtras');
 
 exports.wsConnection = (ws) => {
   ws.on('message', (event) => {
@@ -53,7 +53,7 @@ const narrowCastMessage = async (chatRoomId, parsedMessage) => {
   let message;
   switch (parsedMessage.message) {
     case '/help':
-      message = "Play with WebSockets!\n\nOnly you can see these messages from The Socket.\n\nMessages from The Socket will dissapear when you join a new chatroom, when you refresh the page, or when you log back in.\n\n/help to show this message again\n/quote for some words from a famous person\n/bored for something to entertain programmers\n/joke for some dad jokes\n/fact for interesting facts\n/about for about";
+      message = "Play with WebSockets!\n\nOnly you can see these messages from The Socket.\n\nMessages from The Socket will dissapear when you join a new chatroom, when you refresh the page, or when you log back in.\n\n/help to show this message again\n/quote for some words from a famous person\n/bored for something to entertain programmers\n/joke for some dad jokes\n/fact for interesting facts\n/webapp To learn how to add this app to your home screen\n/about for about";
       break;
     case '/quote':
       message = quotes[Math.floor(Math.random() * quotes.length)];
@@ -77,6 +77,9 @@ const narrowCastMessage = async (chatRoomId, parsedMessage) => {
       break;
     case '/fact':
       message = facts[Math.floor(Math.random() * facts.length)];
+      break;
+    case '/webapp':
+      message = webapp;
       break;
     default:
       message = "Sorry, helper is broken...";
