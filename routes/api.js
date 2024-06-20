@@ -8,6 +8,7 @@ const payloadToJWT = require('../middleware/payloadToJWT');
 
 const loginRouter = require('../routes/loginRouter');
 const signupRouter = require('../routes/signUpRouter');
+const guestRouter = require('../routes/guestRouter');
 const chatRoomRouter = require('../routes/chatRoomRouter');
 const messageRouter = require('../routes/messageRouter');
 const userRouter = require('../routes/userRouter');
@@ -15,6 +16,7 @@ const userRouter = require('../routes/userRouter');
 apiRouter.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'api.html')); });
 apiRouter.use('/signup', signupRouter);
 apiRouter.use('/login', loginRouter);
+apiRouter.use('/guest', guestRouter);
 apiRouter.use('/chatRoom', tokenMover, verifyToken, chatRoomRouter, payloadToJWT);
 apiRouter.use('/message', tokenMover, verifyToken, messageRouter, payloadToJWT);
 apiRouter.use('/user', tokenMover, verifyToken, userRouter, payloadToJWT);
@@ -28,6 +30,7 @@ apiRouter.get('/logout', (req, res, next) => {
 
 // This stuff is here for testing new things
 const testingRoute = require('../routes/testLogic');
+const { getUnpackedSettings } = require('http2');
 apiRouter.use('/test', tokenMover, verifyToken, testingRoute, payloadToJWT);
 
 module.exports = apiRouter;
