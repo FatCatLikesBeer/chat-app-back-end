@@ -18,6 +18,7 @@ modalContainer.classList.add('close');
 modalContainer.innerHTML = "<menu></menu>";
 modalContainer.querySelector('menu').innerHTML = "<li><a id='logout'>Logout</a></li>";
 modalContainer.querySelector('menu').innerHTML += "<li><a id='enable_notifications'>Enable Notifications</a></li>";
+modalContainer.querySelector('menu').innerHTML += "<li><a id='refresh'>Refresh</a></li>";
 modalContainer.querySelector('menu').innerHTML += "<li><a id='about'>About</a></li>";
 document.body.prepend(modalContainer);
 //I would like to do the code below but it doesn't want to work
@@ -81,6 +82,10 @@ about.addEventListener('click', () => {
       aboutModal.close();
     }
   })
+});
+
+document.getElementById('refresh').addEventListener('click', () => {
+  location.reload();
 });
 
 // Export function to the call the menu icon in & out of existence
