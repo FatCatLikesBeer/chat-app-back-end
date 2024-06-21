@@ -12,9 +12,10 @@ const appContainer = document.getElementById('app_container');
 // userData
 export let userData;
 
-// Login, signup, & page refresh logic
+// Login, signup, guest, & page refresh logic
 import './components/login.js';
 import './components/signup.js';
+import './components/guestSignUp.js';
 
 // Show Notifications
 export function showNotification(msg) {

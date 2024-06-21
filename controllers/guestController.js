@@ -21,6 +21,7 @@ function generateUserName() {
 exports.guest = asyncHandler(async (req, res, next) => {
   const userName = generateUserName();
   const password = btoa(generateNumbers());
+  const email = `${userName}@guest.net`;
   try {
     bcrypt.hash(password, 12, async (error, hashedPassword) => {
       // Create a new user

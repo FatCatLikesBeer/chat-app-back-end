@@ -262,3 +262,8 @@ textarea {
 ul {
   margin-bottom: 0px;
 }
+
+#guest_signup {
+  min-width: 150;
+  margin-top: 18px;
+}
