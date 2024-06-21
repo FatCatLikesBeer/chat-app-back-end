@@ -45,6 +45,7 @@ export function deleteChatRoomConfirmation(chatRoomId) {
             return response.json();
           } else {
             console.log(response);
+            location.reload();
             throw new Error("Error with delete chatRoom response");
           }
         } else {

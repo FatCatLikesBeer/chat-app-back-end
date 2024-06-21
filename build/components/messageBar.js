@@ -1,5 +1,4 @@
 import { showNotification } from '../script.js';
-import { populateMessages } from './messages.js';
 import { ws } from '../script.js';
 const messagesSection = document.getElementById('messages_section');
 

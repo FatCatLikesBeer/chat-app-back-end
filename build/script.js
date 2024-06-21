@@ -2,6 +2,7 @@ import { addMenu } from './components/addNew.js';
 import { menu } from './components/burgerMenuModal.js';
 import { populateChats } from './components/chatRoom.js';
 import { appendMessage } from './components/messages.js';
+import { renderCreateChatRoomButton } from './components/createChatRoomButton.js';
 const title = document.getElementById('title');
 const form_container = document.getElementById('form_container');
 const signup_form = document.getElementById('signup_form');
@@ -49,6 +50,7 @@ export function showApp(name, userId) {
   appContainer.removeAttribute('hidden');
   appContainer.removeAttribute('disabled');
   title.innerText = `${name}`;
+  renderCreateChatRoomButton();
 
   // WebSocket Stuff
   ws = new WebSocket('wss://bluebubbles.fly.dev/');

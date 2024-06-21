@@ -8,7 +8,7 @@ import { state } from './addNew.js';
 const renderedChats = [];
 
 let currentlyHighlightedChat;
-function highlightChat(chatRoomId) {
+export function highlightChat(chatRoomId) {
   const targetChat = document.getElementById(chatRoomId.toString());
   if (currentlyHighlightedChat === undefined) {
     targetChat.classList.add('selected_chat');
@@ -25,6 +25,10 @@ function highlightChat(chatRoomId) {
 
 export function populateChats(chatRoomArray, userData) {
   const userId = userData._id.toString();
+  const indicator = document.getElementById('no_chatRooms_indicator');
+  if (indicator) {
+    indicator.remove();
+  }
   try {
     if (chatRoomArray?.length > 0) {
       chatRoomArray.forEach((element) => {
@@ -72,50 +76,47 @@ export function populateChats(chatRoomArray, userData) {
           // Click Action
           chatRoom_element.addEventListener('click', () => {
 
-            if (true) {
-              /* Call API for messages */
-              fetch(`/apiv1/message/${element._id.toString()}`, {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
+            /* Call API for messages */
+            fetch(`/apiv1/message/${element._id.toString()}`, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Error retrieving messages from api");
+                } else {
+                  return response.json();
+                }
               })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error("Error retrieving messages from api");
-                  } else {
-                    return response.json();
-                  }
-                })
-                .then(data => {
-                  if (data.success) {
-                    populateMessages(data.data, userId);
-                    setMessageBar(element._id.toString(), userId);
-                    state.value = element._id.toString();
-                    highlightChat(state.value);
+              .then(data => {
+                if (data.success) {
+                  populateMessages(data.data, userId);
+                  setMessageBar(element._id.toString(), userId);
+                  state.value = element._id.toString();
+                  highlightChat(state.value);
 
-                    // WebSocket Handshake
-                    webSocketHandshake(element._id.toString(), userData);
+                  // WebSocket Handshake
+                  webSocketHandshake(element._id.toString(), userData);
 
-                  } else {
-                    showNotification(data.message);
-                    throw new Error("Error fetching messages: /components/chatRoom.js", data.message);
-                  }
-                })
-                .catch(err => {
-                  showNotification(err);
-                  console.error("Error: chatroom.js **:", err);
-                });
-            } else {
-              console.log(`${state.value} is already selected!`);
-            }
+                } else {
+                  showNotification(data.message);
+                  throw new Error("Error fetching messages: /components/chatRoom.js", data.message);
+                }
+              })
+              .catch(err => {
+                showNotification(err);
+                console.error("Error: chatroom.js **:", err);
+              });
           });
         }
       });
     } else {
       // If condition/argument is an not an array with content
       const chatContainer = document.createElement('div');
+      chatContainer.setAttribute('id', 'no_chatRooms_indicator');
       chatContainer.setAttribute('class', 'chat_container');
-      chatContainer.innerHTML = "<h3>You have no messages!</h3>"
+      chatContainer.innerHTML = "<h3>You have no Chat Rooms!</h3>"
       chatRoom_container.appendChild(chatContainer);
     }
   } catch (error) {

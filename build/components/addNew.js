@@ -1,6 +1,7 @@
 import { populateChats } from './chatRoom.js';
 import { deleteChatRoomConfirmation } from './deleteChatRoomConfirmation.js';
 import { userSearch } from './userSearchModal.js';
+import { focustChatRoom } from './focusChat.js';
 
 // Create Add Menu Icon
 const iconContainer = document.createElement('span');
@@ -16,7 +17,6 @@ const modalContainer = document.createElement('div');
 modalContainer.setAttribute('id', 'add_modal');
 modalContainer.classList.add('close');
 modalContainer.innerHTML = '<menu></menu>';
-const modalElements = [];
 for (let i = 0; i < 3; i++) {
   let id; let body;
   const element = document.createElement('li');
@@ -111,7 +111,7 @@ function addUser() {
 }
 
 // Add chatRoom button logic
-function addChatRoom() {
+export function addChatRoom() {
   fetch('/apiv1/chatRoom', {
     method: "POST",
   })
@@ -128,6 +128,7 @@ function addChatRoom() {
       const latestChatRoom = document.getElementById('chatRooms_container').querySelector('div');
       state.value = latestChatRoom.id;
       userSearch(state.value);
+      focustChatRoom(state.value);
     })
     .catch((err) => {
       console.error("Error creating chatRoom: ", err);
