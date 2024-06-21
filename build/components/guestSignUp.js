@@ -15,10 +15,11 @@ const handleClick = (event) => {
     .then((data) => {
       showNotification(data.message);
       // Successful Guest Signup
+      console.log(data);
       if (data.success) {
         button.removeEventListener('click', handleClick);
         showApp(data.userData.userName, data.userData._id.toString());
-        populateChats();
+        populateChats([], data.userData);
       } else {
         throw new Error(data.message);
       }
@@ -28,7 +29,6 @@ const handleClick = (event) => {
       console.log(error);
       showNotification(error);
     });
-
 }
 
 button.addEventListener('click', handleClick);
